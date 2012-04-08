@@ -20,7 +20,7 @@ CC = 6
 
 def setraw(fd=None, when=TCSAFLUSH, min=1, time=0):
     """Put terminal into a raw mode."""
-    fd = fd or sys.stdin
+    fd = fd if fd is not None else sys.stdin
     mode = tcgetattr(fd)
     mode[IFLAG] = mode[IFLAG] & ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON)
     mode[OFLAG] = mode[OFLAG] & ~(OPOST)
@@ -34,7 +34,7 @@ def setraw(fd=None, when=TCSAFLUSH, min=1, time=0):
 
 def setcbreak(fd=None, when=TCSAFLUSH, min=1, time=0):
     """Put terminal into a cbreak mode."""
-    fd = fd or sys.stdin
+    fd = fd if fd is not None else sys.stdin
     mode = tcgetattr(fd)
     mode[LFLAG] = mode[LFLAG] & ~(ECHO | ICANON)
     mode[CC][VMIN] = min
@@ -46,7 +46,7 @@ class rawmode(object):
     """Context manager to put the terminal in raw mode."""
 
     def __init__(self, fd=None, when=TCSAFLUSH, min=1, time=0):
-        self.fd = fd or sys.stdin
+        self.fd = fd if fd is not None else sys.stdin
         self.when = when
         self.min = min
         self.time = time
@@ -63,7 +63,7 @@ class cbreakmode(object):
     """Context manager to put the terminal in cbreak mode."""
 
     def __init__(self, fd=None, when=TCSAFLUSH, min=1, time=0):
-        self.fd = fd or sys.stdin
+        self.fd = fd if fd is not None else sys.stdin
         self.when = when
         self.min = min
         self.time = time
