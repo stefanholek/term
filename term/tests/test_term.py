@@ -64,6 +64,11 @@ class TermTests(unittest.TestCase):
             self.assertEqual(mode[CC][VTIME], 1)
         self.test_defaults()
 
+    def test_opentty(self):
+        with opentty() as tty:
+            self.assertNotEqual(tty, None)
+            self.assertEqual(tty.mode, 'w+')
+
     def test_getyx(self):
         row, col = getyx()
         self.assertNotEqual(row, 0)
