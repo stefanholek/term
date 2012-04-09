@@ -8,9 +8,11 @@ An enhanced version of the tty module
 Overview
 ========
 
-The **term** package is an improved version of the standard library's
-tty_ module. It provides context managers for temporarily switching the terminal
-to *raw* or *cbreak* mode and allows to query the cursor position and terminal
+The **term** package is an enhanced version of the standard library's
+tty_ module.
+
+It provides context managers to temporarily switch the terminal
+to *raw* or *cbreak* mode and allows to query cursor position and terminal
 dimensions without having to resort to curses.
 
 .. _tty: http://docs.python.org/library/tty.html
@@ -31,7 +33,8 @@ cbreakmode(fd, when=TCSAFLUSH, min=1, time=0)
     Context manager to put the terminal in cbreak mode.
 
 opentty(bufsize=1)
-    Context manager providing an rw stream connected to '/dev/tty'.
+    Context manager returning an rw stream connected to /dev/tty.
+    The stream is None if /dev/tty could not be opened.
 
 getyx()
     Return the cursor position as 1-based (row, col) tuple.
