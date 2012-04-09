@@ -18,24 +18,27 @@ dimensions without having to resort to curses.
 Package Contents
 ================
 
-setraw(fd=None, when=TCSAFLUSH, min=1, time=0)
-    Put fd in raw mode. If fd is None it defaults to sys.stdin.
+setraw(fd, when=TCSAFLUSH, min=1, time=0)
+    Put the terminal in raw mode.
 
-setcbreak(fd=None, when=TCSAFLUSH, min=1, time=0)
-    Put fd in cbreak mode. If fd is None it defaults to sys.stdin.
+setcbreak(fd, when=TCSAFLUSH, min=1, time=0)
+    Put the terminal in cbreak mode.
 
-rawmode(fd=None, when=TCSAFLUSH, min=1, time=0)
-    Context manager to put fd in raw mode. If fd is None it defaults to sys.stdin.
+rawmode(fd, when=TCSAFLUSH, min=1, time=0)
+    Context manager to put the terminal in raw mode.
 
-cbreakmode(fd=None, when=TCSAFLUSH, min=1, time=0)
-    Context manager to put fd in cbreak mode. If fd is None it defaults to sys.stdin.
+cbreakmode(fd, when=TCSAFLUSH, min=1, time=0)
+    Context manager to put the terminal in cbreak mode.
+
+opentty(bufsize=1)
+    Context manager providing an rw stream connected to '/dev/tty'.
 
 getyx()
-    Return cursor position as 1-based (row, col) tuple.
+    Return the cursor position as 1-based (row, col) tuple.
     row and col are 0 if the terminal does not support DSR 6.
 
 getmaxyx()
-    Return terminal dimensions as (maxrow, maxcol) tuple.
+    Return the terminal dimensions as (maxrow, maxcol) tuple.
     maxrow and maxcol are 0 if the terminal does not support DSR 6.
 
 Examples
