@@ -6,7 +6,7 @@ import re
 
 from termios import *
 
-__all__ = ["setraw", "setcbreak", "rawmode", "cbreakmode", "ttystream", "getyx", "getmaxyx",
+__all__ = ["setraw", "setcbreak", "rawmode", "cbreakmode", "opentty", "getyx", "getmaxyx",
            "IFLAG", "OFLAG", "CFLAG", "LFLAG", "ISPEED", "OSPEED", "CC"]
 
 # Indexes for termios list.
@@ -75,7 +75,7 @@ class cbreakmode(object):
         tcsetattr(self.fd, TCSAFLUSH, self.saved)
 
 
-class ttystream(object):
+class opentty(object):
     """Context manager returning an rw stream connected to /dev/tty.
 
     Returns None if /dev/tty cannot be opened.
@@ -119,7 +119,7 @@ def getyx():
 
     row and col are 0 if the terminal does not support DSR 6.
     """
-    with ttystream() as tty:
+    with opentty() as tty:
         row = col = 0
         if tty is not None:
             with cbreakmode(tty, min=0, time=1):
@@ -134,7 +134,7 @@ def getmaxyx():
 
     maxrow and maxcol are 0 if the terminal does not support DSR 6.
     """
-    with ttystream() as tty:
+    with opentty() as tty:
         row = col = 0
         if tty is not None:
             with cbreakmode(tty, min=0, time=1):
