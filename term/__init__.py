@@ -135,13 +135,13 @@ def getmaxyx():
     maxrow and maxcol are 0 if the terminal does not support DSR 6.
     """
     with opentty() as tty:
-        row = col = 0
+        maxrow = maxcol = 0
         if tty is not None:
             with cbreakmode(tty, min=0, time=1):
                 savedyx = getyx()
                 tty.write('\033[10000;10000f\033[6n')
-                row, col = _readyx(tty)
+                maxrow, maxcol = _readyx(tty)
                 tty.write('\033[%d;%df' % savedyx)
             tty.flush() # Python issue7208
-        return row, col
+        return maxrow, maxcol
 
