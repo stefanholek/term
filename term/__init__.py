@@ -1,11 +1,12 @@
 """Terminal utilities."""
 
 import sys
+import os
 import re
 
 from termios import *
 
-__all__ = ["setraw", "setcbreak", "rawmode", "cbreakmode", "getyx", "getmaxyx",
+__all__ = ["setraw", "setcbreak", "rawmode", "cbreakmode", "ttystream", "getyx", "getmaxyx",
            "IFLAG", "OFLAG", "CFLAG", "LFLAG", "ISPEED", "OSPEED", "CC"]
 
 # Indexes for termios list.
@@ -18,9 +19,8 @@ OSPEED = 5
 CC = 6
 
 
-def setraw(fd=None, when=TCSAFLUSH, min=1, time=0):
-    """Put terminal into a raw mode."""
-    fd = fd if fd is not None else sys.stdin
+def setraw(fd, when=TCSAFLUSH, min=1, time=0):
+    """Put terminal in raw mode."""
     mode = tcgetattr(fd)
     mode[IFLAG] = mode[IFLAG] & ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON)
     mode[OFLAG] = mode[OFLAG] & ~(OPOST)
@@ -32,9 +32,8 @@ def setraw(fd=None, when=TCSAFLUSH, min=1, time=0):
     tcsetattr(fd, when, mode)
 
 
-def setcbreak(fd=None, when=TCSAFLUSH, min=1, time=0):
-    """Put terminal into a cbreak mode."""
-    fd = fd if fd is not None else sys.stdin
+def setcbreak(fd, when=TCSAFLUSH, min=1, time=0):
+    """Put terminal in cbreak mode."""
     mode = tcgetattr(fd)
     mode[LFLAG] = mode[LFLAG] & ~(ECHO | ICANON)
     mode[CC][VMIN] = min
@@ -45,8 +44,8 @@ def setcbreak(fd=None, when=TCSAFLUSH, min=1, time=0):
 class rawmode(object):
     """Context manager to put the terminal in raw mode."""
 
-    def __init__(self, fd=None, when=TCSAFLUSH, min=1, time=0):
-        self.fd = fd if fd is not None else sys.stdin
+    def __init__(self, fd, when=TCSAFLUSH, min=1, time=0):
+        self.fd = fd
         self.when = when
         self.min = min
         self.time = time
@@ -62,8 +61,8 @@ class rawmode(object):
 class cbreakmode(object):
     """Context manager to put the terminal in cbreak mode."""
 
-    def __init__(self, fd=None, when=TCSAFLUSH, min=1, time=0):
-        self.fd = fd if fd is not None else sys.stdin
+    def __init__(self, fd, when=TCSAFLUSH, min=1, time=0):
+        self.fd = fd
         self.when = when
         self.min = min
         self.time = time
@@ -76,15 +75,38 @@ class cbreakmode(object):
         tcsetattr(self.fd, TCSAFLUSH, self.saved)
 
 
-def _readyx():
-    """Read a CSI R formatted response from sys.stdin."""
+class ttystream(object):
+    """Context manager returning an rw stream connected to /dev/tty.
+
+    Returns None if /dev/tty cannot be opened.
+    """
+
+    def __init__(self, bufsize=1):
+        self.bufsize = bufsize
+
+    def __enter__(self):
+        self.tty = None
+        try:
+            fd = os.open('/dev/tty', os.O_RDWR | os.O_NOCTTY)
+            self.tty = os.fdopen(fd, 'w+', self.bufsize)
+            return self.tty
+        except EnvironmentError:
+            return None
+
+    def __exit__(self, *ignored):
+        if self.tty is not None:
+            self.tty.close()
+
+
+def _readyx(stream):
+    """Read a CSI R formatted response from stream."""
     p = ''
-    c = sys.stdin.read(1)
+    c = stream.read(1)
     while c:
         p += c
         if c == 'R':
             break
-        c = sys.stdin.read(1)
+        c = stream.read(1)
     if p:
         m = re.search(r'\[(\d+);(\d+)R', p)
         if m is not None:
@@ -96,26 +118,30 @@ def getyx():
     """Return the cursor position as 1-based (row, col) tuple.
 
     row and col are 0 if the terminal does not support DSR 6.
-    Note that you cannot pass fds to getyx; it will always use
-    sys.stdin and sys.stdout to communicate with the terminal.
     """
-    with cbreakmode(min=0, time=1):
-        sys.stdout.write('\033[6n')
-        return _readyx()
+    with ttystream() as tty:
+        row = col = 0
+        if tty is not None:
+            with cbreakmode(tty, min=0, time=1):
+                tty.write('\033[6n')
+                row, col = _readyx(tty)
+            tty.flush() # Python issue7208
+        return row, col
 
 
 def getmaxyx():
     """Return the terminal window dimensions as (maxrow, maxcol) tuple.
 
     maxrow and maxcol are 0 if the terminal does not support DSR 6.
-    Note that you cannot pass fds to getmaxyx; it will always use
-    sys.stdin and sys.stdout to communicate with the terminal.
     """
-    with cbreakmode(min=0, time=1):
-        row, col = getyx()
-        try:
-            sys.stdout.write('\033[10000;10000f\033[6n')
-            return _readyx()
-        finally:
-            sys.stdout.write('\033[%d;%df' % (row, col))
+    with ttystream() as tty:
+        row = col = 0
+        if tty is not None:
+            with cbreakmode(tty, min=0, time=1):
+                savedyx = getyx()
+                tty.write('\033[10000;10000f\033[6n')
+                row, col = _readyx(tty)
+                tty.write('\033[%d;%df' % savedyx)
+            tty.flush() # Python issue7208
+        return row, col
 
