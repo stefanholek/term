@@ -20,7 +20,7 @@ CC = 6
 
 
 def setraw(fd, when=TCSAFLUSH, min=1, time=0):
-    """Put terminal in raw mode."""
+    """Put the terminal in raw mode."""
     mode = tcgetattr(fd)
     mode[IFLAG] = mode[IFLAG] & ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON)
     mode[OFLAG] = mode[OFLAG] & ~(OPOST)
@@ -33,7 +33,7 @@ def setraw(fd, when=TCSAFLUSH, min=1, time=0):
 
 
 def setcbreak(fd, when=TCSAFLUSH, min=1, time=0):
-    """Put terminal in cbreak mode."""
+    """Put the terminal in cbreak mode."""
     mode = tcgetattr(fd)
     mode[LFLAG] = mode[LFLAG] & ~(ECHO | ICANON)
     mode[CC][VMIN] = min
