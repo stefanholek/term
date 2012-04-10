@@ -1,5 +1,7 @@
 """Terminal utilities."""
 
+# Authors: Steen Lumholt, Stefan H. Holek
+
 import sys
 import os
 import re
