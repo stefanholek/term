@@ -8,10 +8,7 @@ import re
 from termios import *
 
 __all__ = ["setraw", "setcbreak", "rawmode", "cbreakmode", "opentty", "getyx", "getmaxyx",
-           "TermIOSError", "IFLAG", "OFLAG", "CFLAG", "LFLAG", "ISPEED", "OSPEED", "CC"]
-
-# Alias for termios.error.
-TermIOSError = error
+           "IFLAG", "OFLAG", "CFLAG", "LFLAG", "ISPEED", "OSPEED", "CC"]
 
 # Indexes for termios list.
 IFLAG = 0
