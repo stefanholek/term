@@ -80,7 +80,7 @@ class cbreakmode(object):
 class opentty(object):
     """Context manager returning an rw stream connected to /dev/tty.
 
-    The stream is None if /dev/tty cannot be opened.
+    The stream is None if /dev/tty could not be opened.
     """
 
     def __init__(self, bufsize=1):
