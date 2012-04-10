@@ -1,4 +1,4 @@
-"""Terminal utilities."""
+"""The term module is intended to replace the tty module."""
 
 # Authors: Steen Lumholt, Stefan H. Holek
 
