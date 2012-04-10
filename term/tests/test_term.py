@@ -8,10 +8,10 @@ from term import *
 class TermTests(unittest.TestCase):
 
     def setUp(self):
-        self.saved = tcgetattr(sys.stdin)
+        self.savedmode = tcgetattr(sys.stdin)
 
     def tearDown(self):
-        tcsetattr(sys.stdin, TCSAFLUSH, self.saved)
+        tcsetattr(sys.stdin, TCSAFLUSH, self.savedmode)
 
     def test_defaults(self):
         mode = tcgetattr(sys.stdin)
@@ -65,24 +65,24 @@ class TermTests(unittest.TestCase):
         self.test_defaults()
 
     def test_setraw_raises_on_bad_fd(self):
-        self.assertRaises(TypeError, setraw, None)
         with open('/dev/null', 'w+') as stdin:
             self.assertRaises(TermIOSError, setraw, stdin)
+        self.assertRaises(TypeError, setraw, None)
 
     def test_setcbreak_raises_on_bad_fd(self):
-        self.assertRaises(TypeError, setcbreak, None)
         with open('/dev/null', 'w+') as stdin:
             self.assertRaises(TermIOSError, setcbreak, stdin)
+        self.assertRaises(TypeError, setcbreak, None)
 
     def test_rawmode_raises_on_bad_fd(self):
-        self.assertRaises(TypeError, rawmode(None).__enter__)
         with open('/dev/null', 'w+') as stdin:
             self.assertRaises(TermIOSError, rawmode(stdin).__enter__)
+        self.assertRaises(TypeError, rawmode(None).__enter__)
 
     def test_cbreakmode_raises_on_bad_fd(self):
-        self.assertRaises(TypeError, cbreakmode(None).__enter__)
         with open('/dev/null', 'w+') as stdin:
             self.assertRaises(TermIOSError, cbreakmode(stdin).__enter__)
+        self.assertRaises(TypeError, cbreakmode(None).__enter__)
 
     def test_opentty(self):
         with opentty() as tty:
