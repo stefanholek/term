@@ -58,5 +58,5 @@ Examples
 You may also want to look at the `source code`_ of getyx, which is a
 good example of how all this plays together.
 
-.. _`source code`: https://github.com/stefanholek/term/blob/master/term/__init__.py#L121
+.. _`source code`: https://github.com/stefanholek/term/blob/master/term/__init__.py#L122
 
