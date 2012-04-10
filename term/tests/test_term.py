@@ -68,21 +68,29 @@ class TermTests(unittest.TestCase):
     def test_setraw_raises_on_bad_fd(self):
         with open('/dev/null', 'w+') as stdin:
             self.assertRaises(termios.error, setraw, stdin)
-        self.assertRaises(TypeError, setraw, None)
 
     def test_setcbreak_raises_on_bad_fd(self):
         with open('/dev/null', 'w+') as stdin:
             self.assertRaises(termios.error, setcbreak, stdin)
-        self.assertRaises(TypeError, setcbreak, None)
 
     def test_rawmode_raises_on_bad_fd(self):
         with open('/dev/null', 'w+') as stdin:
             self.assertRaises(termios.error, rawmode(stdin).__enter__)
-        self.assertRaises(TypeError, rawmode(None).__enter__)
 
     def test_cbreakmode_raises_on_bad_fd(self):
         with open('/dev/null', 'w+') as stdin:
             self.assertRaises(termios.error, cbreakmode(stdin).__enter__)
+
+    def test_setraw_raises_on_None_fd(self):
+        self.assertRaises(TypeError, setraw, None)
+
+    def test_setcbreak_raises_on_None_fd(self):
+        self.assertRaises(TypeError, setcbreak, None)
+
+    def test_rawmode_raises_on_None_fd(self):
+        self.assertRaises(TypeError, rawmode(None).__enter__)
+
+    def test_cbreakmode_raises_on_None_fd(self):
         self.assertRaises(TypeError, cbreakmode(None).__enter__)
 
     def test_opentty(self):
