@@ -10,8 +10,7 @@ Overview
 
 The **term** package is an enhanced version of the standard library's
 tty_ module.
-
-It provides context managers to temporarily switch the terminal
+It provides context managers for temporarily switching the terminal
 to *raw* or *cbreak* mode and allows to query cursor position and terminal
 dimensions without having to resort to curses.
 
@@ -31,6 +30,10 @@ rawmode(fd, when=TCSAFLUSH, min=1, time=0)
 
 cbreakmode(fd, when=TCSAFLUSH, min=1, time=0)
     Context manager to put the terminal in cbreak mode.
+
+TermIOSError
+    Raised by any of the above if the passed in fd is not a terminal.
+    Convenience alias for termios.error.
 
 opentty(bufsize=1)
     Context manager returning an rw stream connected to /dev/tty.
@@ -55,5 +58,5 @@ Examples
 You may also want to look at the `source code`_ of getyx, which is a
 good example of how all this plays together.
 
-.. _`source code`: https://github.com/stefanholek/term/blob/master/term/__init__.py#L119
+.. _`source code`: https://github.com/stefanholek/term/blob/master/term/__init__.py#L121
 
