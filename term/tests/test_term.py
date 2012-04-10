@@ -64,6 +64,22 @@ class TermTests(unittest.TestCase):
             self.assertEqual(mode[CC][VTIME], 1)
         self.test_defaults()
 
+    def test_setraw_raises_on_bad_fd(self):
+        with open('/dev/null', 'w+') as stdin:
+            self.assertRaises(TermIOSError, setraw, stdin)
+
+    def test_setcbreak_raises_on_bad_fd(self):
+        with open('/dev/null', 'w+') as stdin:
+            self.assertRaises(TermIOSError, setcbreak, stdin)
+
+    def test_rawmode_raises_on_bad_fd(self):
+        with open('/dev/null', 'w+') as stdin:
+            self.assertRaises(TermIOSError, rawmode(stdin).__enter__)
+
+    def test_cbreakmode_raises_on_bad_fd(self):
+        with open('/dev/null', 'w+') as stdin:
+            self.assertRaises(TermIOSError, cbreakmode(stdin).__enter__)
+
     def test_opentty(self):
         with opentty() as tty:
             self.assertNotEqual(tty, None)
