@@ -55,11 +55,11 @@ class rawmode(object):
         self.time = time
 
     def __enter__(self):
-        self.saved = tcgetattr(self.fd)
+        self.savedmode = tcgetattr(self.fd)
         setraw(self.fd, self.when, self.min, self.time)
 
     def __exit__(self, *ignored):
-        tcsetattr(self.fd, TCSAFLUSH, self.saved)
+        tcsetattr(self.fd, TCSAFLUSH, self.savedmode)
 
 
 class cbreakmode(object):
@@ -72,11 +72,11 @@ class cbreakmode(object):
         self.time = time
 
     def __enter__(self):
-        self.saved = tcgetattr(self.fd)
+        self.savedmode = tcgetattr(self.fd)
         setcbreak(self.fd, self.when, self.min, self.time)
 
     def __exit__(self, *ignored):
-        tcsetattr(self.fd, TCSAFLUSH, self.saved)
+        tcsetattr(self.fd, TCSAFLUSH, self.savedmode)
 
 
 class opentty(object):
