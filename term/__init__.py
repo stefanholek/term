@@ -2,14 +2,16 @@
 
 # Authors: Steen Lumholt, Stefan H. Holek
 
-import sys
 import os
 import re
 
 from termios import *
 
 __all__ = ["setraw", "setcbreak", "rawmode", "cbreakmode", "opentty", "getyx", "getmaxyx",
-           "IFLAG", "OFLAG", "CFLAG", "LFLAG", "ISPEED", "OSPEED", "CC"]
+           "TermIOSError", "IFLAG", "OFLAG", "CFLAG", "LFLAG", "ISPEED", "OSPEED", "CC"]
+
+# Alias for termios.error.
+TermIOSError = error
 
 # Indexes for termios list.
 IFLAG = 0
