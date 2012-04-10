@@ -8,7 +8,7 @@ An enhanced version of the tty module
 Overview
 ========
 
-The **term** package is an enhanced version of the standard library's
+The *term* package is an enhanced version of the standard library's
 tty_ module.
 It provides context managers for temporarily switching the terminal
 to *raw* or *cbreak* mode and allows to query cursor position and terminal
