@@ -35,7 +35,7 @@ TermIOSError
     Raised by any of the above if the passed in fd is not a terminal.
     Convenience alias for termios.error.
 
-opentty(bufsize=1)
+opentty(device='/dev/tty', bufsize=1)
     Context manager returning an rw stream connected to /dev/tty.
     The stream is None if /dev/tty could not be opened.
 

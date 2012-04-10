@@ -85,13 +85,14 @@ class opentty(object):
     The stream is None if /dev/tty could not be opened.
     """
 
-    def __init__(self, bufsize=1):
+    def __init__(self, device='/dev/tty', bufsize=1):
+        self.device = device
         self.bufsize = bufsize
 
     def __enter__(self):
         self.tty = None
         try:
-            fd = os.open('/dev/tty', os.O_RDWR | os.O_NOCTTY)
+            fd = os.open(self.device, os.O_RDWR | os.O_NOCTTY)
             self.tty = os.fdopen(fd, 'w+', self.bufsize)
         except EnvironmentError:
             pass
