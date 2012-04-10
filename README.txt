@@ -50,4 +50,10 @@ Examples
 
     from term import getyx
 
-    print 'The cursor is in row %d column %d' % getyx()
+    print 'The cursor is in line %d column %d' % getyx()
+
+You may also want to look at the `source code`_ of getyx, which is a
+good example of how all this plays together.
+
+.. _`source code`: https://github.com/stefanholek/term/blob/master/term/__init__.py#L119
+
