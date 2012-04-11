@@ -81,9 +81,9 @@ class opentty(object):
 
     The stream is None if the device could not be opened.
     """
+    device = '/dev/tty'
 
-    def __init__(self, device='/dev/tty', bufsize=1):
-        self.device = device
+    def __init__(self, bufsize=1):
         self.bufsize = bufsize
 
     def __enter__(self):

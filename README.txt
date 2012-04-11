@@ -31,7 +31,7 @@ rawmode(fd, when=TCSAFLUSH, min=1, time=0)
 cbreakmode(fd, when=TCSAFLUSH, min=1, time=0)
     Context manager to put the terminal in cbreak mode.
 
-opentty(device='/dev/tty', bufsize=1)
+opentty(bufsize=1)
     Context manager returning an rw stream connected to /dev/tty.
     The stream is None if the device could not be opened.
 

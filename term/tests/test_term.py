@@ -98,16 +98,14 @@ class TermTests(unittest.TestCase):
             self.assertNotEqual(tty, None)
             self.assertEqual(tty.mode, 'w+')
 
-    def test_opentty_accepts_device_argument(self):
-        with opentty('/dev/tty') as tty:
-            self.assertNotEqual(tty, None)
-
     def test_opentty_accepts_bufsize_argument(self):
-        with opentty('/dev/tty', 1) as tty:
+        with opentty(1) as tty:
             self.assertNotEqual(tty, None)
 
     def test_opentty_returns_None_on_bad_device(self):
-        with opentty('/dev/foobar') as tty:
+        opener = opentty()
+        opener.device = '/dev/foobar'
+        with opener as tty:
             self.assertEqual(tty, None)
 
     def test_opentty_raises_on_None_device(self):
