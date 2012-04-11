@@ -127,7 +127,6 @@ def getyx():
             with cbreakmode(tty, min=0, time=1):
                 tty.write('\033[6n')
                 row, col = _readyx(tty)
-            tty.flush() # Python issue7208
         return row, col
 
 
@@ -144,6 +143,5 @@ def getmaxyx():
                 tty.write('\033[10000;10000f\033[6n')
                 maxrow, maxcol = _readyx(tty)
                 tty.write('\033[%d;%df' % savedyx)
-            tty.flush() # Python issue7208
         return maxrow, maxcol
 
