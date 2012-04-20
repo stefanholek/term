@@ -93,6 +93,10 @@ class TermTests(unittest.TestCase):
     def test_cbreakmode_raises_on_None_fd(self):
         self.assertRaises(TypeError, cbreakmode(None).__enter__)
 
+    def test__opentty(self):
+        from term import _opentty
+        self.assertNotEqual(_opentty('/dev/tty', 'w+', 1), None)
+
     def test_opentty(self):
         with opentty() as tty:
             self.assertNotEqual(tty, None)

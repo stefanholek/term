@@ -76,12 +76,29 @@ class cbreakmode(object):
         tcsetattr(self.fd, TCSAFLUSH, self.savedmode)
 
 
+def _opentty(device, mode, bufsize):
+    """Open a tty device for reading and writing."""
+    fd = os.open(device, os.O_RDWR | os.O_NOCTTY)
+
+    if not os.isatty(fd):
+        return None
+
+    # os.fdopen requires a "seekable" device
+    try:
+        os.lseek(fd, 0, os.SEEK_CUR)
+    except OSError:
+        pass # Now what?
+
+    return os.fdopen(fd, mode, bufsize)
+
+
 class opentty(object):
     """Context manager returning an rw stream connected to /dev/tty.
 
     The stream is None if the device could not be opened.
     """
     device = '/dev/tty'
+    mode = 'w+'
 
     def __init__(self, bufsize=1):
         self.bufsize = bufsize
@@ -89,8 +106,7 @@ class opentty(object):
     def __enter__(self):
         self.tty = None
         try:
-            fd = os.open(self.device, os.O_RDWR | os.O_NOCTTY)
-            self.tty = os.fdopen(fd, 'w+', self.bufsize)
+            self.tty = _opentty(self.device, self.mode, self.bufsize)
         except EnvironmentError:
             pass
         return self.tty
