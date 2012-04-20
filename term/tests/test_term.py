@@ -95,7 +95,13 @@ class TermTests(unittest.TestCase):
 
     def test__opentty(self):
         from term import _opentty
-        self.assertNotEqual(_opentty('/dev/tty', 'w+', 1), None)
+        tty = _opentty('/dev/tty', 'w+', 1)
+        try:
+            self.assertNotEqual(tty, None)
+        except AssertionError:
+            raise
+        else:
+            tty.close()
 
     def test_opentty(self):
         with opentty() as tty:
