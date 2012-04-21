@@ -56,38 +56,32 @@ class savemode(object):
         tcsetattr(self.fd, TCSAFLUSH, self.savedmode)
 
 
-class rawmode(object):
+class rawmode(savemode):
     """Context manager to put the terminal in raw mode."""
 
     def __init__(self, fd, when=TCSAFLUSH, min=1, time=0):
-        self.fd = fd
+        super(rawmode, self).__init__(fd)
         self.when = when
         self.min = min
         self.time = time
 
     def __enter__(self):
-        self.savedmode = tcgetattr(self.fd)
+        super(rawmode, self).__enter__()
         setraw(self.fd, self.when, self.min, self.time)
 
-    def __exit__(self, *ignored):
-        tcsetattr(self.fd, TCSAFLUSH, self.savedmode)
 
-
-class cbreakmode(object):
+class cbreakmode(savemode):
     """Context manager to put the terminal in cbreak mode."""
 
     def __init__(self, fd, when=TCSAFLUSH, min=1, time=0):
-        self.fd = fd
+        super(cbreakmode, self).__init__(fd)
         self.when = when
         self.min = min
         self.time = time
 
     def __enter__(self):
-        self.savedmode = tcgetattr(self.fd)
+        super(cbreakmode, self).__enter__()
         setcbreak(self.fd, self.when, self.min, self.time)
-
-    def __exit__(self, *ignored):
-        tcsetattr(self.fd, TCSAFLUSH, self.savedmode)
 
 
 def _opentty(device, bufsize):
