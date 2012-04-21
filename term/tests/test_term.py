@@ -128,8 +128,3 @@ class TermTests(unittest.TestCase):
         self.assertNotEqual(line, 0)
         self.assertNotEqual(col, 0)
 
-    def test_savemode(self):
-        with savemode(sys.stdin):
-            setraw(sys.stdin)
-        self.test_defaults()
-

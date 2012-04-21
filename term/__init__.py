@@ -8,7 +8,7 @@ import re
 
 from termios import *
 
-__all__ = ["setraw", "setcbreak", "savemode", "rawmode", "cbreakmode", "opentty", "getyx",
+__all__ = ["setraw", "setcbreak", "rawmode", "cbreakmode", "opentty", "getyx",
            "IFLAG", "OFLAG", "CFLAG", "LFLAG", "ISPEED", "OSPEED", "CC"]
 
 # Indexes for termios list.
@@ -43,45 +43,38 @@ def setcbreak(fd, when=TCSAFLUSH, min=1, time=0):
     tcsetattr(fd, when, mode)
 
 
-class savemode(object):
-    """Context manager to save and restore the terminal state."""
+class rawmode(object):
+    """Context manager to put the terminal in raw mode."""
 
-    def __init__(self, fd):
+    def __init__(self, fd, when=TCSAFLUSH, min=1, time=0):
         self.fd = fd
+        self.when = when
+        self.min = min
+        self.time = time
 
     def __enter__(self):
         self.savedmode = tcgetattr(self.fd)
+        setraw(self.fd, self.when, self.min, self.time)
 
     def __exit__(self, *ignored):
         tcsetattr(self.fd, TCSAFLUSH, self.savedmode)
 
 
-class rawmode(savemode):
-    """Context manager to put the terminal in raw mode."""
-
-    def __init__(self, fd, when=TCSAFLUSH, min=1, time=0):
-        super(rawmode, self).__init__(fd)
-        self.when = when
-        self.min = min
-        self.time = time
-
-    def __enter__(self):
-        super(rawmode, self).__enter__()
-        setraw(self.fd, self.when, self.min, self.time)
-
-
-class cbreakmode(savemode):
+class cbreakmode(object):
     """Context manager to put the terminal in cbreak mode."""
 
     def __init__(self, fd, when=TCSAFLUSH, min=1, time=0):
-        super(cbreakmode, self).__init__(fd)
+        self.fd = fd
         self.when = when
         self.min = min
         self.time = time
 
     def __enter__(self):
-        super(cbreakmode, self).__enter__()
+        self.savedmode = tcgetattr(self.fd)
         setcbreak(self.fd, self.when, self.min, self.time)
+
+    def __exit__(self, *ignored):
+        tcsetattr(self.fd, TCSAFLUSH, self.savedmode)
 
 
 def _opentty(device, bufsize):

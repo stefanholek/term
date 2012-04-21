@@ -10,9 +10,6 @@ Changelog
 - Disable buffering if the device is not seekable.
   [stefan]
 
-- Add savemode context manager.
-  [stefan]
-
 - Remove getmaxyx since it cannot be implemented reliably.
   [stefan]
 
