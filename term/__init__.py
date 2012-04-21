@@ -43,6 +43,19 @@ def setcbreak(fd, when=TCSAFLUSH, min=1, time=0):
     tcsetattr(fd, when, mode)
 
 
+class savemode(object):
+    """Context manager to save and restore the terminal state."""
+
+    def __init__(self, fd):
+        self.fd = fd
+
+    def __enter__(self):
+        self.savedmode = tcgetattr(self.fd)
+
+    def __exit__(self, *ignored):
+        tcsetattr(self.fd, TCSAFLUSH, self.savedmode)
+
+
 class rawmode(object):
     """Context manager to put the terminal in raw mode."""
 
