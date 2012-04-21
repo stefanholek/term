@@ -8,7 +8,7 @@ import re
 
 from termios import *
 
-__all__ = ["setraw", "setcbreak", "rawmode", "cbreakmode", "opentty", "getyx",
+__all__ = ["setraw", "setcbreak", "savemode", "rawmode", "cbreakmode", "opentty", "getyx",
            "IFLAG", "OFLAG", "CFLAG", "LFLAG", "ISPEED", "OSPEED", "CC"]
 
 # Indexes for termios list.
