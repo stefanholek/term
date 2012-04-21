@@ -56,3 +56,11 @@ good example of how all this plays together.
 
 .. _`source code`: https://github.com/stefanholek/term/blob/master/term/__init__.py#L119
 
+Caveats
+=======
+
+Some terminals respond *very* slowly (I am looking at you, Linux).
+It is therefore advisable not to call getyx from time critical code sections.
+getmaxyx may be almost unusable on some systems, causing the cursor to jump
+to the bottom-right corner of the screen and back.
+
