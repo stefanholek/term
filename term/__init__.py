@@ -2,6 +2,7 @@
 
 # Authors: Steen Lumholt, Stefan H. Holek
 
+import sys
 import os
 import re
 
@@ -98,7 +99,11 @@ class opentty(object):
     The stream is None if the device could not be opened.
     """
     device = '/dev/tty'
-    mode = 'w+'
+
+    if sys.version_info[0] >= 3:
+        mode = 'rb+'
+    else:
+        mode = 'r+'
 
     def __init__(self, bufsize=1):
         self.bufsize = bufsize
@@ -116,17 +121,24 @@ class opentty(object):
             self.tty.close()
 
 
+# See e.g. http://www.termsys.demon.co.uk/vtansi.htm
+
+RESPONSE_WAIT_TIME = 5 # 0.5s (Terminals can be very slow)
+_curpos_re = re.compile(b'\[(\d+);(\d+)R')
+
+
 def _readyx(stream):
-    """Read a CSI R formatted response from stream."""
-    p = ''
+    """Read a cursor position response from stream.
+    """
+    p = b''
     c = stream.read(1)
     while c:
         p += c
-        if c == 'R':
+        if c == b'R':
             break
         c = stream.read(1)
     if p:
-        m = re.search(r'\[(\d+);(\d+)R', p)
+        m = _curpos_re.search(p)
         if m is not None:
             return int(m.group(1), 10), int(m.group(2), 10)
     return 0, 0
@@ -140,8 +152,8 @@ def getyx():
     with opentty() as tty:
         row = col = 0
         if tty is not None:
-            with cbreakmode(tty, min=0, time=1):
-                tty.write('\033[6n')
+            with cbreakmode(tty, min=0, time=RESPONSE_WAIT_TIME):
+                tty.write(b'\033[6n')
                 row, col = _readyx(tty)
         return row, col
 
@@ -154,10 +166,14 @@ def getmaxyx():
     with opentty() as tty:
         maxrow = maxcol = 0
         if tty is not None:
-            with cbreakmode(tty, min=0, time=1):
+            with cbreakmode(tty, min=0, time=RESPONSE_WAIT_TIME):
                 savedyx = getyx()
-                tty.write('\033[10000;10000f\033[6n')
-                maxrow, maxcol = _readyx(tty)
-                tty.write('\033[%d;%df' % savedyx)
+                if savedyx != (0, 0):
+                    tty.write(b'\033[10000;10000f\033[6n')
+                    maxrow, maxcol = _readyx(tty)
+                    if sys.version_info[0] >= 3:
+                        tty.write(('\033[%d;%df' % savedyx).encode('ascii'))
+                    else:
+                        tty.write('\033[%d;%df' % savedyx)
         return maxrow, maxcol
 
