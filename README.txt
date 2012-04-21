@@ -25,6 +25,9 @@ setraw(fd, when=TCSAFLUSH, min=1, time=0)
 setcbreak(fd, when=TCSAFLUSH, min=1, time=0)
     Put the terminal in cbreak mode.
 
+savemode(fd)
+    Context manager to save and restore the terminal state.
+
 rawmode(fd, when=TCSAFLUSH, min=1, time=0)
     Context manager to put the terminal in raw mode.
 
