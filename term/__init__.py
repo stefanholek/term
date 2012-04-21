@@ -120,7 +120,7 @@ class opentty(object):
 
 # See e.g. http://www.termsys.demon.co.uk/vtansi.htm
 
-RESPONSE_WAIT_TIME = 5 # Terminals can be very slow
+RESPONSE_WAIT_TIME = 30 # 3 seconds
 
 
 def _readyx(stream):
