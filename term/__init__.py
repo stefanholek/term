@@ -121,7 +121,6 @@ class opentty(object):
 # See e.g. http://www.termsys.demon.co.uk/vtansi.htm
 
 RESPONSE_WAIT_TIME = 5 # Terminals can be very slow
-_curpos_re = re.compile(b'\[(\d+);(\d+)R')
 
 
 def _readyx(stream):
@@ -134,7 +133,7 @@ def _readyx(stream):
             break
         c = stream.read(1)
     if p:
-        m = _curpos_re.search(p)
+        m = re.search(b'\[(\d+);(\d+)R', p)
         if m is not None:
             return int(m.group(1), 10), int(m.group(2), 10)
     return 0, 0
