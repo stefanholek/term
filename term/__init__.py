@@ -141,15 +141,15 @@ def _readyx(stream):
 
 
 def getyx():
-    """Return the cursor position as 1-based (row, col) tuple.
+    """Return the cursor position as 1-based (line, col) tuple.
 
-    row and col are 0 if the terminal does not support DSR 6.
+    line and col are 0 if the terminal does not support DSR 6.
     """
     with opentty() as tty:
-        row = col = 0
+        line = col = 0
         if tty is not None:
             with cbreakmode(tty, min=0, time=RESPONSE_WAIT_TIME):
                 tty.write(b'\033[6n')
-                row, col = _readyx(tty)
-        return row, col
+                line, col = _readyx(tty)
+        return line, col
 

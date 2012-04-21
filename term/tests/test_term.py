@@ -124,7 +124,7 @@ class TermTests(unittest.TestCase):
             self.assertEqual(tty, None)
 
     def test_getyx(self):
-        row, col = getyx()
-        self.assertNotEqual(row, 0)
+        line, col = getyx()
+        self.assertNotEqual(line, 0)
         self.assertNotEqual(col, 0)
 
