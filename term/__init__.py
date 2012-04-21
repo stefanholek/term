@@ -125,13 +125,12 @@ class opentty(object):
 
 # See e.g. http://www.termsys.demon.co.uk/vtansi.htm
 
-RESPONSE_WAIT_TIME = 5 # 0.5s (Terminals can be very slow)
+RESPONSE_WAIT_TIME = 5 # Terminals can be very slow
 _curpos_re = re.compile(b'\[(\d+);(\d+)R')
 
 
 def _readyx(stream):
-    """Read a cursor position response from stream.
-    """
+    """Read a cursor position response from stream."""
     p = b''
     c = stream.read(1)
     while c:
