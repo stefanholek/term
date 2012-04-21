@@ -11,8 +11,8 @@ Overview
 The **term** package is an enhanced version of the standard library's
 tty_ module.
 It provides context managers for temporarily switching the terminal
-to *raw* or *cbreak* mode and allows to query cursor position and terminal
-dimensions without having to resort to curses.
+to *raw* or *cbreak* mode and allows to retrieve the cursor position
+without having to resort to curses.
 
 .. _tty: http://docs.python.org/library/tty.html
 
@@ -36,12 +36,8 @@ opentty(bufsize=1)
     The stream is None if the device could not be opened.
 
 getyx()
-    Return the cursor position as 1-based (row, col) tuple.
-    row and col are 0 if the terminal does not support DSR 6.
-
-getmaxyx()
-    Return the terminal dimensions as (maxrow, maxcol) tuple.
-    maxrow and maxcol are 0 if the terminal does not support DSR 6.
+    Return the cursor position as 1-based (line, col) tuple.
+    line and col are 0 if the terminal does not support DSR 6.
 
 Examples
 ========
@@ -51,8 +47,7 @@ Examples
 
     print 'The cursor is in line %d column %d' % getyx()
 
-You may also want to look at the `source code`_ of getyx, which is a
-good example of how all this plays together.
+You may also want to look at the `source code`_ of getyx.
 
 .. _`source code`: https://github.com/stefanholek/term/blob/master/term/__init__.py#L119
 
@@ -60,7 +55,5 @@ Caveats
 =======
 
 Some terminals respond *very* slowly (I am looking at you, Linux).
-It is therefore advisable not to call getyx from time critical code sections.
-getmaxyx may be almost unusable on some systems, causing the cursor to jump
-to the bottom-right corner of the screen and back.
+It is therefore advisable not to call getyx from time-critical code sections.
 

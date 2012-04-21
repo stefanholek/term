@@ -128,13 +128,3 @@ class TermTests(unittest.TestCase):
         self.assertNotEqual(row, 0)
         self.assertNotEqual(col, 0)
 
-    def test_getmaxyx(self):
-        maxrow, maxcol = getmaxyx()
-        self.assertNotEqual(maxrow, 0)
-        self.assertNotEqual(maxcol, 0)
-
-    def test_getmaxyx_restores_cursor_pos(self):
-        row, col = getyx()
-        maxrow, maxcol = getmaxyx()
-        self.assertEqual(getyx(), (row, col))
-

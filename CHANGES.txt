@@ -10,6 +10,9 @@ Changelog
 - Disable buffering if the device is not seekable.
   [stefan]
 
+- Remove getmaxyx since it cannot be implemented reliably.
+  [stefan]
+
 
 1.0 - 2012-04-11
 ----------------

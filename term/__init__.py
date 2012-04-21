@@ -8,7 +8,7 @@ import re
 
 from termios import *
 
-__all__ = ["setraw", "setcbreak", "rawmode", "cbreakmode", "opentty", "getyx", "getmaxyx",
+__all__ = ["setraw", "setcbreak", "rawmode", "cbreakmode", "opentty", "getyx",
            "IFLAG", "OFLAG", "CFLAG", "LFLAG", "ISPEED", "OSPEED", "CC"]
 
 # Indexes for termios list.
@@ -152,24 +152,4 @@ def getyx():
                 tty.write(b'\033[6n')
                 row, col = _readyx(tty)
         return row, col
-
-
-def getmaxyx():
-    """Return the terminal window dimensions as (maxrow, maxcol) tuple.
-
-    maxrow and maxcol are 0 if the terminal does not support DSR 6.
-    """
-    with opentty() as tty:
-        maxrow = maxcol = 0
-        if tty is not None:
-            with cbreakmode(tty, min=0, time=RESPONSE_WAIT_TIME):
-                savedyx = getyx()
-                if savedyx != (0, 0):
-                    tty.write(b'\033[10000;10000f\033[6n')
-                    maxrow, maxcol = _readyx(tty)
-                    if sys.version_info[0] >= 3:
-                        tty.write(('\033[%d;%df' % savedyx).encode('ascii'))
-                    else:
-                        tty.write('\033[%d;%df' % savedyx)
-        return maxrow, maxcol
 
