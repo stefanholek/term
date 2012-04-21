@@ -49,11 +49,11 @@ Examples
 
 You may also want to look at the `source code`_ of getyx.
 
-.. _`source code`: https://github.com/stefanholek/term/blob/master/term/__init__.py#L119
+.. _`source code`: https://github.com/stefanholek/term/blob/master/term/__init__.py#L142
 
-Caveats
-=======
+Caveat
+======
 
-Some terminals respond *very* slowly (I am looking at you, Linux).
-It is therefore advisable not to call getyx from time-critical code sections.
+Some terminals respond *very* slowly.
+It is therefore not advisable to call getyx from time-sensitive code.
 
