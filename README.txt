@@ -17,7 +17,7 @@ without having to resort to curses.
 .. _tty: http://docs.python.org/library/tty.html
 
 Package Contents
-================
+----------------
 
 setraw(fd, when=TCSAFLUSH, min=1, time=0)
     Put the terminal in raw mode.
@@ -40,7 +40,7 @@ getyx()
     line and col are 0 if the terminal does not support DSR 6.
 
 Examples
-========
+--------
 ::
 
     from term import getyx
@@ -52,7 +52,7 @@ You may also want to look at the `source code`_ of getyx.
 .. _`source code`: https://github.com/stefanholek/term/blob/master/term/__init__.py#L142
 
 Caveat
-======
+------
 
 Some terminals respond *very* slowly.
 It is therefore not advisable to call getyx from time-sensitive code.
