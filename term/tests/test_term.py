@@ -100,7 +100,7 @@ class TermTests(unittest.TestCase):
 
     def test__opentty(self):
         from term import _opentty
-        tty = _opentty('/dev/tty', MODE, 1)
+        tty = _opentty('/dev/tty', 1)
         try:
             self.assertNotEqual(tty, None)
         except AssertionError:
