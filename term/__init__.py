@@ -21,6 +21,9 @@ ISPEED = 4
 OSPEED = 5
 CC = 6
 
+# Wait at most 3 seconds for response.
+WAIT_TIME = 30
+
 
 def setraw(fd, when=TCSAFLUSH, min=1, time=0):
     """Put the terminal in raw mode."""
@@ -82,9 +85,6 @@ def _opentty(device, bufsize):
     """Open a tty device for reading and writing."""
     fd = os.open(device, os.O_RDWR | os.O_NOCTTY)
 
-    if not os.isatty(fd):
-        return None
-
     if sys.version_info[0] >= 3:
         # Buffering requires a seekable device
         try:
@@ -143,7 +143,7 @@ def getyx():
     with opentty() as tty:
         line = col = 0
         if tty is not None:
-            with cbreakmode(tty, min=0, time=30):
+            with cbreakmode(tty, min=0, time=WAIT_TIME):
                 tty.write(b('\033[6n'))
                 line, col = _readyx(tty)
         return line, col
