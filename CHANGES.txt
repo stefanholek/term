@@ -13,6 +13,9 @@ Changelog
 - Remove getmaxyx since it cannot be implemented reliably.
   [stefan]
 
+- Support Python 2.5.
+  [stefan]
+
 
 1.0 - 2012-04-11
 ----------------

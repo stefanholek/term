@@ -49,11 +49,12 @@ Examples
 
 You may also want to look at the `source code`_ of getyx.
 
-.. _`source code`: https://github.com/stefanholek/term/blob/master/term/__init__.py#L142
+.. _`source code`: https://github.com/stefanholek/term/blob/tty-not-seekable/term/__init__.py#L140
 
 Caveat
 ------
 
-Some terminals respond *very* slowly.
-It is therefore not advisable to call getyx from time-sensitive code.
+The terminal must be in canonical mode before any of the functions and
+context managers can be used. They are not meant for switching between, say,
+raw and cbreak modes. Nesting context managers of the same type is ok though.
 
