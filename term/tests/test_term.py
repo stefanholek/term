@@ -133,7 +133,5 @@ class TermTests(unittest.TestCase):
 
     def test_b(self):
         self.assertFalse(isinstance(b('foo'), unicode))
-
-    def test_b_unicode(self):
         self.assertFalse(isinstance(b(u'foo'), unicode))
 
