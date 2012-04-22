@@ -118,13 +118,8 @@ class opentty(object):
             self.tty.close()
 
 
-# See e.g. http://www.termsys.demon.co.uk/vtansi.htm
-
-RESPONSE_WAIT_TIME = 30 # 3 seconds
-
-
 def _readyx(stream):
-    """Read a cursor position response from stream."""
+    """Read a CSI R response from stream."""
     p = b''
     c = stream.read(1)
     while c:
@@ -147,7 +142,7 @@ def getyx():
     with opentty() as tty:
         line = col = 0
         if tty is not None:
-            with cbreakmode(tty, min=0, time=RESPONSE_WAIT_TIME):
+            with cbreakmode(tty, min=0, time=30):
                 tty.write(b'\033[6n')
                 line, col = _readyx(tty)
         return line, col
