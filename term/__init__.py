@@ -2,6 +2,8 @@
 
 # Authors: Steen Lumholt, Stefan H. Holek
 
+from __future__ import with_statement
+
 import sys
 import os
 import re
