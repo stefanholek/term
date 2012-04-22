@@ -23,8 +23,8 @@ ISPEED = 4
 OSPEED = 5
 CC = 6
 
-# Wait at most 3 seconds for response.
-WAIT_TIME = 30
+# Wait at most 3 seconds for a response.
+MAX_WAIT = 30
 
 
 def setraw(fd, when=TCSAFLUSH, min=1, time=0):
@@ -145,7 +145,7 @@ def getyx():
     with opentty() as tty:
         line = col = 0
         if tty is not None:
-            with cbreakmode(tty, min=0, time=WAIT_TIME):
+            with cbreakmode(tty, min=0, time=MAX_WAIT):
                 tty.write(b('\033[6n'))
                 line, col = _readyx(tty)
         return line, col
