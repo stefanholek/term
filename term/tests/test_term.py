@@ -4,6 +4,7 @@ import termios
 
 from termios import *
 from term import *
+from term.utils import b
 
 if sys.version_info[0] >= 3:
     MODE = 'rb+'
@@ -25,8 +26,8 @@ class TermTests(unittest.TestCase):
         self.assertEqual(mode[LFLAG] & ICANON, ICANON)
         self.assertEqual(mode[LFLAG] & IEXTEN, IEXTEN)
         self.assertEqual(mode[LFLAG] & ISIG, ISIG)
-        self.assertEqual(mode[CC][VMIN], b'\x01')
-        self.assertEqual(mode[CC][VTIME], b'\x00')
+        self.assertEqual(mode[CC][VMIN], b('\x01'))
+        self.assertEqual(mode[CC][VTIME], b('\x00'))
 
     def test_setraw(self):
         setraw(sys.stdin, min=0, time=1)
@@ -127,4 +128,10 @@ class TermTests(unittest.TestCase):
         line, col = getyx()
         self.assertNotEqual(line, 0)
         self.assertNotEqual(col, 0)
+
+    def test_b(self):
+        self.assertFalse(isinstance(b('foo'), unicode))
+
+    def test_b_unicode(self):
+        self.assertFalse(isinstance(b(u'foo'), unicode))
 

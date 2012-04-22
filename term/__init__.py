@@ -7,6 +7,7 @@ import os
 import re
 
 from termios import *
+from term.utils import b
 
 __all__ = ["setraw", "setcbreak", "rawmode", "cbreakmode", "opentty", "getyx",
            "IFLAG", "OFLAG", "CFLAG", "LFLAG", "ISPEED", "OSPEED", "CC"]
@@ -120,15 +121,15 @@ class opentty(object):
 
 def _readyx(stream):
     """Read a CSI R response from stream."""
-    p = b''
+    p = b('')
     c = stream.read(1)
     while c:
         p += c
-        if c == b'R':
+        if c == b('R'):
             break
         c = stream.read(1)
     if p:
-        m = re.search(b'\[(\d+);(\d+)R', p)
+        m = re.search(b('\[(\d+);(\d+)R'), p)
         if m is not None:
             return int(m.group(1), 10), int(m.group(2), 10)
     return 0, 0
@@ -143,7 +144,7 @@ def getyx():
         line = col = 0
         if tty is not None:
             with cbreakmode(tty, min=0, time=30):
-                tty.write(b'\033[6n')
+                tty.write(b('\033[6n'))
                 line, col = _readyx(tty)
         return line, col
 
