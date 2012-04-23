@@ -23,7 +23,7 @@ ISPEED = 4
 OSPEED = 5
 CC = 6
 
-# Wait at most 3 seconds for a response.
+# Wait up to 3 seconds for a response.
 MAX_WAIT = 30
 
 
