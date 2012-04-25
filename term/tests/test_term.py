@@ -1,9 +1,17 @@
+from __future__ import with_statement
+
 import sys
 import unittest
 import termios
 
 from termios import *
 from term import *
+from term.utils import b
+
+if sys.version_info[0] >= 3:
+    MODE = 'rb+'
+else:
+    MODE = 'r+'
 
 
 class TermTests(unittest.TestCase):
@@ -20,8 +28,8 @@ class TermTests(unittest.TestCase):
         self.assertEqual(mode[LFLAG] & ICANON, ICANON)
         self.assertEqual(mode[LFLAG] & IEXTEN, IEXTEN)
         self.assertEqual(mode[LFLAG] & ISIG, ISIG)
-        self.assertEqual(mode[CC][VMIN], b'\x01')
-        self.assertEqual(mode[CC][VTIME], b'\x00')
+        self.assertEqual(mode[CC][VMIN], b('\x01'))
+        self.assertEqual(mode[CC][VTIME], b('\x00'))
 
     def test_setraw(self):
         setraw(sys.stdin, min=0, time=1)
@@ -66,19 +74,19 @@ class TermTests(unittest.TestCase):
         self.test_defaults()
 
     def test_setraw_raises_on_bad_fd(self):
-        with open('/dev/null', 'w+') as stdin:
+        with open('/dev/null', MODE) as stdin:
             self.assertRaises(termios.error, setraw, stdin)
 
     def test_setcbreak_raises_on_bad_fd(self):
-        with open('/dev/null', 'w+') as stdin:
+        with open('/dev/null', MODE) as stdin:
             self.assertRaises(termios.error, setcbreak, stdin)
 
     def test_rawmode_raises_on_bad_fd(self):
-        with open('/dev/null', 'w+') as stdin:
+        with open('/dev/null', MODE) as stdin:
             self.assertRaises(termios.error, rawmode(stdin).__enter__)
 
     def test_cbreakmode_raises_on_bad_fd(self):
-        with open('/dev/null', 'w+') as stdin:
+        with open('/dev/null', MODE) as stdin:
             self.assertRaises(termios.error, cbreakmode(stdin).__enter__)
 
     def test_setraw_raises_on_None_fd(self):
@@ -93,10 +101,20 @@ class TermTests(unittest.TestCase):
     def test_cbreakmode_raises_on_None_fd(self):
         self.assertRaises(TypeError, cbreakmode(None).__enter__)
 
+    def test__opentty(self):
+        from term import _opentty
+        tty = _opentty('/dev/tty', 1)
+        try:
+            self.assertNotEqual(tty, None)
+        except AssertionError:
+            raise
+        else:
+            tty.close()
+
     def test_opentty(self):
         with opentty() as tty:
             self.assertNotEqual(tty, None)
-            self.assertEqual(tty.mode, 'w+')
+            self.assertEqual(tty.mode, MODE)
 
     def test_opentty_accepts_bufsize_argument(self):
         with opentty(1) as tty:
@@ -108,21 +126,12 @@ class TermTests(unittest.TestCase):
         with opener as tty:
             self.assertEqual(tty, None)
 
-    def test_opentty_raises_on_None_device(self):
-        self.assertRaises(TypeError, opentty(None).__enter__)
-
     def test_getyx(self):
-        row, col = getyx()
-        self.assertNotEqual(row, 0)
+        line, col = getyx()
+        self.assertNotEqual(line, 0)
         self.assertNotEqual(col, 0)
 
-    def test_getmaxyx(self):
-        maxrow, maxcol = getmaxyx()
-        self.assertNotEqual(maxrow, 0)
-        self.assertNotEqual(maxcol, 0)
-
-    def test_getmaxyx_restores_cursor_pos(self):
-        row, col = getyx()
-        maxrow, maxcol = getmaxyx()
-        self.assertEqual(getyx(), (row, col))
+    def test_b(self):
+        self.assertFalse(isinstance(b('foo'), unicode))
+        self.assertFalse(isinstance(b(u'foo'), unicode))
 

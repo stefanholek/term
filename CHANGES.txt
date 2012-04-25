@@ -4,6 +4,18 @@ Changelog
 1.1 - Unreleased
 ----------------
 
+- Open /dev/tty in binary mode under Python 3.
+  [stefan]
+
+- Disable buffering if the device is not seekable.
+  [stefan]
+
+- Remove getmaxyx since it cannot be implemented reliably.
+  [stefan]
+
+- Support Python 2.5.
+  [stefan]
+
 
 1.0 - 2012-04-11
 ----------------

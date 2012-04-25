@@ -2,12 +2,16 @@
 
 # Authors: Steen Lumholt, Stefan H. Holek
 
+from __future__ import with_statement
+
+import sys
 import os
 import re
 
 from termios import *
+from term.utils import b
 
-__all__ = ["setraw", "setcbreak", "rawmode", "cbreakmode", "opentty", "getyx", "getmaxyx",
+__all__ = ["setraw", "setcbreak", "rawmode", "cbreakmode", "opentty", "getyx",
            "IFLAG", "OFLAG", "CFLAG", "LFLAG", "ISPEED", "OSPEED", "CC"]
 
 # Indexes for termios list.
@@ -18,6 +22,9 @@ LFLAG = 3
 ISPEED = 4
 OSPEED = 5
 CC = 6
+
+# Wait up to 3 seconds for a response.
+MAX_WAIT = 30
 
 
 def setraw(fd, when=TCSAFLUSH, min=1, time=0):
@@ -76,6 +83,21 @@ class cbreakmode(object):
         tcsetattr(self.fd, TCSAFLUSH, self.savedmode)
 
 
+def _opentty(device, bufsize):
+    """Open a tty device for reading and writing."""
+    fd = os.open(device, os.O_RDWR | os.O_NOCTTY)
+
+    if sys.version_info[0] >= 3:
+        # Buffering requires a seekable device
+        try:
+            os.lseek(fd, 0, os.SEEK_CUR)
+        except OSError:
+            bufsize = 0
+        return open(fd, 'rb+', bufsize)
+
+    return os.fdopen(fd, 'r+', bufsize)
+
+
 class opentty(object):
     """Context manager returning an rw stream connected to /dev/tty.
 
@@ -89,8 +111,7 @@ class opentty(object):
     def __enter__(self):
         self.tty = None
         try:
-            fd = os.open(self.device, os.O_RDWR | os.O_NOCTTY)
-            self.tty = os.fdopen(fd, 'w+', self.bufsize)
+            self.tty = _opentty(self.device, self.bufsize)
         except EnvironmentError:
             pass
         return self.tty
@@ -101,47 +122,31 @@ class opentty(object):
 
 
 def _readyx(stream):
-    """Read a CSI R formatted response from stream."""
-    p = ''
+    """Read a CSI R response from stream."""
+    p = b('')
     c = stream.read(1)
     while c:
         p += c
-        if c == 'R':
+        if c == b('R'):
             break
         c = stream.read(1)
     if p:
-        m = re.search(r'\[(\d+);(\d+)R', p)
+        m = re.search(b(r'\[(\d+);(\d+)R'), p)
         if m is not None:
             return int(m.group(1), 10), int(m.group(2), 10)
     return 0, 0
 
 
 def getyx():
-    """Return the cursor position as 1-based (row, col) tuple.
+    """Return the cursor position as 1-based (line, col) tuple.
 
-    row and col are 0 if the terminal does not support DSR 6.
+    line and col are 0 if the terminal does not support DSR 6.
     """
     with opentty() as tty:
-        row = col = 0
+        line = col = 0
         if tty is not None:
-            with cbreakmode(tty, min=0, time=1):
-                tty.write('\033[6n')
-                row, col = _readyx(tty)
-        return row, col
-
-
-def getmaxyx():
-    """Return the terminal window dimensions as (maxrow, maxcol) tuple.
-
-    maxrow and maxcol are 0 if the terminal does not support DSR 6.
-    """
-    with opentty() as tty:
-        maxrow = maxcol = 0
-        if tty is not None:
-            with cbreakmode(tty, min=0, time=1):
-                savedyx = getyx()
-                tty.write('\033[10000;10000f\033[6n')
-                maxrow, maxcol = _readyx(tty)
-                tty.write('\033[%d;%df' % savedyx)
-        return maxrow, maxcol
+            with cbreakmode(tty, min=0, time=MAX_WAIT):
+                tty.write(b('\033[6n'))
+                line, col = _readyx(tty)
+        return line, col
 
