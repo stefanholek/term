@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.1 - Unreleased
+2.0 - Unreleased
 ----------------
 
 - Open /dev/tty in binary mode under Python 3.

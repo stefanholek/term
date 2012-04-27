@@ -49,7 +49,7 @@ Examples
 
 You may also want to look at the `source code`_ of getyx.
 
-.. _`source code`: https://github.com/stefanholek/term/blob/tty-not-seekable/term/__init__.py#L140
+.. _`source code`: https://github.com/stefanholek/term/blob/master/term/__init__.py#L140
 
 Caveat
 ------
