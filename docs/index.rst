@@ -14,6 +14,9 @@ term |version| -- Terminal Control
 
 The :mod:`term` module is intended to replace the :mod:`tty <py:tty>` module.
 
+API Documentation
+=================
+
 .. autofunction:: term.setraw(fd, when=TCSAFLUSH, min=1, time=0)
 .. autofunction:: term.setcbreak(fd, when=TCSAFLUSH, min=1, time=0)
 .. autofunction:: term.rawmode(fd, when=TCSAFLUSH, min=1, time=0)
