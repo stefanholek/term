@@ -3,13 +3,13 @@
 # Authors: Steen Lumholt, Stefan H. Holek
 
 from __future__ import with_statement
+from term.utils import b
 
 import sys
 import os
 import re
 
 from termios import *
-from term.utils import b
 
 __all__ = ["setraw", "setcbreak", "rawmode", "cbreakmode", "opentty", "getyx",
            "IFLAG", "OFLAG", "CFLAG", "LFLAG", "ISPEED", "OSPEED", "CC"]
