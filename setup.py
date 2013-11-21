@@ -5,8 +5,8 @@ version = '2.1'
 setup(name='term',
       version=version,
       description='An enhanced version of the tty module',
-      long_description=open('README.txt').read() + '\n' +
-                       open('CHANGES.txt').read(),
+      long_description=open('README.rst').read() + '\n' +
+                       open('CHANGES.rst').read(),
       classifiers=[
           'Development Status :: 5 - Production/Stable',
           'Intended Audience :: Developers',
