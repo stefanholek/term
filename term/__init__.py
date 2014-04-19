@@ -140,7 +140,7 @@ def _readyx(stream):
 def getyx():
     """Return the cursor position as 1-based (line, col) tuple.
 
-    line and col are 0 if the terminal does not support DSR 6.
+    Line and col are 0 if the terminal does not support DSR 6.
     """
     with opentty() as tty:
         line = col = 0
