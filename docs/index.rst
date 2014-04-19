@@ -12,7 +12,7 @@ term |version| -- Terminal Control
 
 .. module:: term
 
-The :mod:`term` module is intended to replace the :mod:`tty <py:tty>` module.
+The :mod:`term` module is intended to replace the :mod:`tty <py3k:tty>` module.
 
 API Documentation
 =================
@@ -26,7 +26,7 @@ API Documentation
 
 .. seealso::
 
-   Module :mod:`termios <py:termios>`
+   Module :mod:`termios <py3k:termios>`
       Low-level terminal control interface.
 
 Indices and Tables

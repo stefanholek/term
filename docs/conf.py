@@ -247,7 +247,7 @@ texinfo_documents = [
 # -- Intersphinx configuration -------------------------------------------------
 
 intersphinx_mapping = {
-    'py': ('http://docs.python.org/2', 'http://docs.python.org/2.7/objects.inv'),
-    'py3k': ('http://docs.python.org/3', 'http://docs.python.org/3.4/objects.inv'),
+    'py': ('http://docs.python.org/2', 'http://docs.python.org/2/objects.inv'),
+    'py3k': ('http://docs.python.org/3', 'http://docs.python.org/3/objects.inv'),
 }
 
