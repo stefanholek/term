@@ -3,13 +3,13 @@
 # Authors: Steen Lumholt, Stefan H. Holek
 
 from __future__ import with_statement
+from term.utils import b
 
 import sys
 import os
 import re
 
 from termios import *
-from term.utils import b
 
 __all__ = ["setraw", "setcbreak", "rawmode", "cbreakmode", "opentty", "getyx",
            "IFLAG", "OFLAG", "CFLAG", "LFLAG", "ISPEED", "OSPEED", "CC"]
@@ -131,7 +131,7 @@ def _readyx(stream):
             break
         c = stream.read(1)
     if p:
-        m = re.search(b(r'\[(\d+);(\d+)R'), p)
+        m = re.search(b('\[(\d+);(\d+)R'), p)
         if m is not None:
             return int(m.group(1), 10), int(m.group(2), 10)
     return 0, 0

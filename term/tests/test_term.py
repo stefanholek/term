@@ -133,5 +133,7 @@ class TermTests(unittest.TestCase):
 
     def test_b(self):
         self.assertFalse(isinstance(b('foo'), unicode))
-        self.assertFalse(isinstance(b(u'foo'), unicode))
+        if sys.version_info[0] < 3:
+            # b is not an encoder!
+            self.assertTrue(isinstance(b(u'foo'), unicode))
 

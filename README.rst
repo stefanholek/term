@@ -17,7 +17,7 @@ without having to resort to curses.
 .. _tty: http://docs.python.org/library/tty.html
 
 Package Contents
-----------------
+================
 
 setraw(fd, when=TCSAFLUSH, min=1, time=0)
     Put the terminal in raw mode.
@@ -37,10 +37,10 @@ opentty(bufsize=1)
 
 getyx()
     Return the cursor position as 1-based (line, col) tuple.
-    line and col are 0 if the terminal does not support DSR 6.
+    Line and col are 0 if the terminal does not support DSR 6.
 
 Examples
---------
+========
 ::
 
     from term import getyx
@@ -52,7 +52,7 @@ You may also want to look at the `source code`_ of getyx.
 .. _`source code`: https://github.com/stefanholek/term/blob/master/term/__init__.py#L140
 
 Caveat
-------
+======
 
 The terminal must be in canonical mode before any of the functions and
 context managers can be used. They are not meant for switching between, say,
