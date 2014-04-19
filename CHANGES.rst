@@ -1,12 +1,11 @@
 Changelog
 =========
 
-2.1 - Unreleased
+2.1 - 2014-04-19
 ----------------
 
 - Remove setuptools from install_requires because it isn't.
   [stefan]
-
 
 2.0 - 2012-04-27
 ----------------
@@ -25,7 +24,6 @@ Changelog
 
 - Change license to GPL or PSF to avoid relicensing of PSF code.
   [stefan]
-
 
 1.0 - 2012-04-11
 ----------------
