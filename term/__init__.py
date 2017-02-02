@@ -2,9 +2,6 @@
 
 # Authors: Steen Lumholt, Stefan H. Holek
 
-from __future__ import with_statement
-from term.utils import b
-
 import sys
 import os
 import re
@@ -123,15 +120,15 @@ class opentty(object):
 
 def _readyx(stream):
     """Read a CSI R response from stream."""
-    p = b('')
+    p = b''
     c = stream.read(1)
     while c:
         p += c
-        if c == b('R'):
+        if c == b'R':
             break
         c = stream.read(1)
     if p:
-        m = re.search(b('\[(\d+);(\d+)R'), p)
+        m = re.search(b'\[(\d+);(\d+)R', p)
         if m is not None:
             return int(m.group(1), 10), int(m.group(2), 10)
     return 0, 0
@@ -146,7 +143,7 @@ def getyx():
         line = col = 0
         if tty is not None:
             with cbreakmode(tty, min=0, time=MAX_WAIT):
-                tty.write(b('\033[6n'))
+                tty.write(b'\033[6n')
                 line, col = _readyx(tty)
         return line, col
 
