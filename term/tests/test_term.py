@@ -10,6 +10,7 @@ from term.utils import b
 
 if sys.version_info[0] >= 3:
     MODE = 'rb+'
+    unicode = str
 else:
     MODE = 'r+'
 

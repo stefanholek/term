@@ -33,6 +33,5 @@ setup(name='term',
       packages=find_packages(),
       include_package_data=True,
       zip_safe=True,
-      use_2to3=True,
       test_suite='term.tests',
 )
