@@ -14,7 +14,7 @@ It provides context managers for temporarily switching the terminal
 to *raw* or *cbreak* mode and allows to retrieve the cursor position
 without having to resort to curses.
 
-.. _tty: http://docs.python.org/library/tty.html
+.. _tty: https://docs.python.org/3/library/tty.html
 
 Package Contents
 ================
@@ -41,11 +41,18 @@ getyx()
 
 Examples
 ========
-::
 
-    from term import getyx
+To resize the terminal window, we enter cbreak mode and write the new dimensions
+to the tty (DSR 8)::
 
-    print 'The cursor is in line %d column %d' % getyx()
+    from term import opentty, cbreakmode
+
+    with opentty() as tty:
+        if tty is not None:
+            with cbreakmode(tty, min=0):
+                tty.write('\033[8;25;80t');
+
+    print 'terminal resized'
 
 You may also want to look at the `source code`_ of getyx.
 
@@ -55,6 +62,7 @@ Caveat
 ======
 
 The terminal must be in canonical mode before any of the functions and
-context managers can be used. They are not meant for switching between, say,
-raw and cbreak modes. Nesting context managers of the same type is ok though.
+context managers can be used. They are not meant for switching between e.g.
+raw and cbreak modes. Nesting context managers of the same type is allowed
+though.
 
