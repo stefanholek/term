@@ -12,7 +12,7 @@ term |version| -- Terminal Control
 
 .. module:: term
 
-The :mod:`term` module is intended to replace the :mod:`tty <py3k:tty>` module.
+The :mod:`term` module is a replacement for the :mod:`tty <py3k:tty>` module.
 
 API Documentation
 =================
@@ -28,6 +28,9 @@ API Documentation
 
    Module :mod:`termios <py3k:termios>`
       Low-level terminal control interface.
+
+   `Xterm Control Sequences <http://www.xfree86.org/4.8.0/ctlseqs.html>`_
+      Detailed list of escape sequences accepted by xterm.
 
 Indices and Tables
 ==================
