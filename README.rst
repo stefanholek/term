@@ -43,7 +43,7 @@ Examples
 ========
 
 To resize the terminal window, we enter cbreak mode and write the new dimensions
-to the tty (DSR 8)::
+to the tty::
 
     from term import opentty, cbreakmode
 
@@ -54,7 +54,7 @@ to the tty (DSR 8)::
 
     print 'terminal resized'
 
-You may also want to look at the `source code`_ of getyx.
+You may also want to look at the `source code`_ of getyx().
 
 .. _`source code`: https://github.com/stefanholek/term/blob/master/term/__init__.py#L140
 
