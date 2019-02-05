@@ -50,7 +50,7 @@ to the tty::
     with opentty() as tty:
         if tty is not None:
             with cbreakmode(tty, min=0):
-                tty.write('\033[8;25;80t');
+                tty.write(b'\033[8;25;80t');
 
     print 'terminal resized'
 
@@ -62,7 +62,14 @@ Caveat
 ======
 
 The terminal must be in canonical mode before any of the functions and
-context managers can be used. They are not meant for switching between e.g.
+context managers can be used. They are not meant for switching between
 raw and cbreak modes. Nesting context managers of the same type is allowed
 though.
+
+Documentation
+=============
+
+Please also see the `API Documentation`_.
+
+.. _`API Documentation`: https://term.readthedocs.io/en/stable/
 
