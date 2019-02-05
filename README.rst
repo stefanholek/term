@@ -56,7 +56,7 @@ to the tty::
 
 You may also want to look at the `source code`_ of getyx().
 
-.. _`source code`: https://github.com/stefanholek/term/blob/master/term/__init__.py#L137
+.. _`source code`: https://github.com/stefanholek/term/blob/master/term/__init__.py#L143
 
 Caveat
 ======

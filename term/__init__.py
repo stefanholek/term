@@ -20,6 +20,12 @@ ISPEED = 4
 OSPEED = 5
 CC = 6
 
+# Open /dev/tty in binary mode in Python 3.
+if sys.version_info[0] >= 3:
+    MODE = 'rb+'
+else:
+    MODE = 'r+'
+
 # Wait up to 3 seconds for a response.
 MAX_WAIT = 30
 
@@ -90,9 +96,9 @@ def _opentty(device, bufsize):
             os.lseek(fd, 0, os.SEEK_CUR)
         except OSError:
             bufsize = 0
-        return open(fd, 'rb+', bufsize)
-
-    return os.fdopen(fd, 'r+', bufsize)
+        return open(fd, MODE, bufsize)
+    else:
+        return os.fdopen(fd, MODE, bufsize)
 
 
 class opentty(object):
