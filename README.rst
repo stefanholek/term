@@ -42,8 +42,8 @@ getyx()
 Examples
 ========
 
-To resize the terminal window we enter cbreak mode and write the new dimensions
-to the tty::
+To resize the terminal window we enter cbreak mode and write the new
+dimensions to the tty::
 
     from term import opentty, cbreakmode
 
