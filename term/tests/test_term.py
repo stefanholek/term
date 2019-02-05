@@ -5,10 +5,14 @@ import termios
 from termios import *
 from term import *
 
+from term import MODE
+from term import _opentty
+from term import _readyx
+
 if sys.version_info[0] >= 3:
-    MODE = 'rb+'
+    from io import BytesIO
 else:
-    MODE = 'r+'
+    from StringIO import StringIO as BytesIO
 
 
 class TermTests(unittest.TestCase):
@@ -99,7 +103,6 @@ class TermTests(unittest.TestCase):
         self.assertRaises(TypeError, cbreakmode(None).__enter__)
 
     def test__opentty(self):
-        from term import _opentty
         tty = _opentty('/dev/tty', 1)
         try:
             self.assertNotEqual(tty, None)
@@ -122,6 +125,22 @@ class TermTests(unittest.TestCase):
         opener.device = '/dev/foobar'
         with opener as tty:
             self.assertEqual(tty, None)
+
+    def test__readyx(self):
+        stream = BytesIO(b'[24;1R');
+        self.assertEqual(_readyx(stream), (24, 1))
+
+    def test__readyx_empty(self):
+        stream = BytesIO();
+        self.assertEqual(_readyx(stream), (0, 0))
+
+    def test__readyx_too_short(self):
+        stream = BytesIO(b'[24;1');
+        self.assertEqual(_readyx(stream), (0, 0))
+
+    def test__readyx_not_a_number(self):
+        stream = BytesIO(b'[24;%R');
+        self.assertEqual(_readyx(stream), (0, 0))
 
     def test_getyx(self):
         line, col = getyx()
