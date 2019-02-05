@@ -12,7 +12,7 @@ term |version| -- Terminal Control
 
 .. module:: term
 
-The :mod:`term` module is a replacement for the :mod:`tty <py3k:tty>` module.
+The :mod:`term` module is an enhanced version of the :mod:`tty <py3k:tty>` module.
 
 API Documentation
 =================
