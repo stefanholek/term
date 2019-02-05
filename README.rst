@@ -52,7 +52,7 @@ to the tty::
             with cbreakmode(tty, min=0):
                 tty.write(b'\033[8;25;80t');
 
-    print 'terminal resized'
+            print('terminal resized')
 
 You may also want to look at the `source code`_ of getyx().
 
