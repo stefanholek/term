@@ -37,7 +37,8 @@ opentty(bufsize=1)
 
 getyx()
     Return the cursor position as 1-based (line, col) tuple.
-    Line and col are 0 if the terminal does not support DSR 6.
+    Line and col are 0 if the device cannot be opened or the terminal
+    does not support DSR 6.
 
 Examples
 ========
