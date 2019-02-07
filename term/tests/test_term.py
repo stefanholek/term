@@ -127,7 +127,7 @@ class TermTests(unittest.TestCase):
             self.assertEqual(tty, None)
 
     def test__readyx(self):
-        stream = BytesIO(b'[24;1R');
+        stream = BytesIO(b'\033[24;1R');
         self.assertEqual(_readyx(stream), (24, 1))
 
     def test__readyx_empty(self):
@@ -135,11 +135,11 @@ class TermTests(unittest.TestCase):
         self.assertEqual(_readyx(stream), (0, 0))
 
     def test__readyx_too_short(self):
-        stream = BytesIO(b'[24;1');
+        stream = BytesIO(b'\033[24;1');
         self.assertEqual(_readyx(stream), (0, 0))
 
     def test__readyx_not_a_number(self):
-        stream = BytesIO(b'[24;%R');
+        stream = BytesIO(b'\033[24;%R');
         self.assertEqual(_readyx(stream), (0, 0))
 
     def test_getyx(self):
