@@ -147,10 +147,9 @@ def getyx():
     terminal does not support DSR 6.
     """
     with opentty() as tty:
-        line = col = 0
         if tty is not None:
             with cbreakmode(tty, min=0, time=MAX_WAIT):
                 tty.write(b'\033[6n')
-                line, col = _readyx(tty)
-        return line, col
+                return _readyx(tty)
+    return 0, 0
 
