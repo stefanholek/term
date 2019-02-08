@@ -27,7 +27,7 @@ else:
     MODE = 'r+'
 
 # Wait up to 3 seconds for a response.
-MAX_WAIT = 30
+TIMEOUT = 30
 
 
 def setraw(fd, when=TCSAFLUSH, min=1, time=0):
@@ -148,7 +148,7 @@ def getyx():
     """
     with opentty() as tty:
         if tty is not None:
-            with cbreakmode(tty, min=0, time=MAX_WAIT):
+            with cbreakmode(tty, min=0, time=TIMEOUT):
                 tty.write(b'\033[6n')
                 return _readyx(tty)
     return 0, 0
