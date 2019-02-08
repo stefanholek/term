@@ -10,7 +10,7 @@ Changelog
 - Release as wheel.
   [stefan]
 
-- Drop explicit GPL because PSF license is GPL-compatible anyway.
+- Drop explicit GPL because the PSF license is GPL-compatible anyway.
   [stefan]
 
 2.2 - 2017-02-05
