@@ -7,6 +7,9 @@ Changelog
 - Add Python 3.8 to tox.ini. Remove old Python versions.
   [stefan]
 
+- Fix escape sequence warning in byte string literal.
+  [stefan]
+
 
 2.3 - 2019-02-08
 ----------------

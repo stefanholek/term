@@ -134,7 +134,7 @@ def _readyx(stream):
             break
         c = stream.read(1)
     if p:
-        m = re.search(b'(\d+);(\d+)R$', p)
+        m = re.search(b'(\\d+);(\\d+)R$', p)
         if m is not None:
             return int(m.group(1), 10), int(m.group(2), 10)
     return 0, 0
