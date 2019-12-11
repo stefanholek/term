@@ -87,6 +87,10 @@ def _opentty(device, bufsize):
     """Open a tty device for reading and writing."""
     fd = os.open(device, os.O_RDWR | os.O_NOCTTY)
 
+    # Line buffering is text mode only
+    if bufsize == 1:
+        bufsize = -1
+
     if sys.version_info[0] >= 3:
         # Buffering requires a seekable device
         try:
