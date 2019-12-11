@@ -44,7 +44,9 @@ Examples
 ========
 
 To resize the terminal window we enter cbreak mode and write the new
-dimensions to the tty::
+dimensions to the tty:
+
+.. code-block:: python
 
     from term import opentty, cbreakmode
 
