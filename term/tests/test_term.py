@@ -103,13 +103,24 @@ class TermTests(unittest.TestCase):
         self.assertRaises(TypeError, cbreakmode(None).__enter__)
 
     def test__opentty(self):
+        tty = _opentty('/dev/tty', -1)
+        self.assertNotEqual(tty, None)
+        tty.close()
+
+    def test__opentty_unbuffered(self):
+        tty = _opentty('/dev/tty', 0)
+        self.assertNotEqual(tty, None)
+        tty.close()
+
+    def test__opentty_buffered(self):
+        tty = _opentty('/dev/tty', 512)
+        self.assertNotEqual(tty, None)
+        tty.close()
+
+    def test__opentty_line_buffered(self):
         tty = _opentty('/dev/tty', 1)
-        try:
-            self.assertNotEqual(tty, None)
-        except AssertionError:
-            raise
-        else:
-            tty.close()
+        self.assertNotEqual(tty, None)
+        tty.close()
 
     def test_opentty(self):
         with opentty() as tty:
@@ -117,7 +128,7 @@ class TermTests(unittest.TestCase):
             self.assertEqual(tty.mode, MODE)
 
     def test_opentty_accepts_bufsize_argument(self):
-        with opentty(1) as tty:
+        with opentty(-1) as tty:
             self.assertNotEqual(tty, None)
 
     def test_opentty_returns_None_on_bad_device(self):

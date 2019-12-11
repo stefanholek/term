@@ -105,11 +105,11 @@ def _opentty(device, bufsize):
 class opentty(object):
     """Context manager returning an rw stream connected to /dev/tty.
 
-    The stream is None if the device could not be opened.
+    The stream is None if the device cannot be opened.
     """
     device = '/dev/tty'
 
-    def __init__(self, bufsize=1):
+    def __init__(self, bufsize=-1):
         self.bufsize = bufsize
 
     def __enter__(self):

@@ -31,9 +31,9 @@ rawmode(fd, when=TCSAFLUSH, min=1, time=0)
 cbreakmode(fd, when=TCSAFLUSH, min=1, time=0)
     Context manager to put the terminal in cbreak mode.
 
-opentty(bufsize=1)
+opentty(bufsize=-1)
     Context manager returning an rw stream connected to /dev/tty.
-    The stream is None if the device could not be opened.
+    The stream is None if the device cannot be opened.
 
 getyx()
     Return the cursor position as 1-based (line, col) tuple.

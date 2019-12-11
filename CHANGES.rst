@@ -13,6 +13,11 @@ Changelog
 - Open /dev/tty in binary mode under both Python 2 and 3.
   [stefan]
 
+- Officially change opentty's bufsize argument default from 1 to -1.
+  Under Python 3, 1 has effectively meant -1 all along but Python 3.8
+  now issues a warning.
+  [stefan]
+
 2.3 - 2019-02-08
 ----------------
 
