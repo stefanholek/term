@@ -20,11 +20,8 @@ ISPEED = 4
 OSPEED = 5
 CC = 6
 
-# Open /dev/tty in binary mode in Python 3.
-if sys.version_info[0] >= 3:
-    MODE = 'rb+'
-else:
-    MODE = 'r+'
+# Open /dev/tty in binary mode.
+MODE = 'rb+'
 
 # Wait up to 3 seconds for a response.
 TIMEOUT = 30

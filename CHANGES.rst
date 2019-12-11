@@ -10,6 +10,8 @@ Changelog
 - Fix escape sequence warning in byte string literal.
   [stefan]
 
+- Open /dev/tty in binary mode under both Python 2 and 3.
+  [stefan]
 
 2.3 - 2019-02-08
 ----------------
