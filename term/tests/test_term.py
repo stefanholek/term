@@ -15,6 +15,34 @@ else:
     from StringIO import StringIO as BytesIO
 
 
+# CC members are of type unsigned char which corresponds to bytes.
+# CPython and PyPy return bytes in some cases and ints in others.
+def int_(x):
+    if not isinstance(x, int):
+        x = ord(x)
+    return x
+
+
+class IntegerTests(unittest.TestCase):
+
+    def test_int(self):
+        self.assertEqual(int_(0), 0)
+        self.assertEqual(int_(1), 1)
+        self.assertEqual(int_(255), 255)
+        self.assertEqual(int_(4), 4)
+        self.assertEqual(int_(32767), 32767)
+
+    def test_bytes(self):
+        self.assertEqual(int_(b'\x00'), 0)
+        self.assertEqual(int_(b'\x01'), 1)
+        self.assertEqual(int_(b'\xff'), 255)
+        self.assertEqual(int_(b'4'), 52)
+        self.assertEqual(int_(b'\x34'), 52)
+
+    def test_bytes_too_long(self):
+        self.assertRaises(TypeError, int_, b'32767')
+
+
 class TermTests(unittest.TestCase):
 
     def setUp(self):
@@ -29,8 +57,8 @@ class TermTests(unittest.TestCase):
         self.assertEqual(mode[LFLAG] & ICANON, ICANON)
         self.assertEqual(mode[LFLAG] & IEXTEN, IEXTEN)
         self.assertEqual(mode[LFLAG] & ISIG, ISIG)
-        self.assertEqual(mode[CC][VMIN], b'\x01')
-        self.assertEqual(mode[CC][VTIME], b'\x00')
+        self.assertEqual(int_(mode[CC][VMIN]), 1)
+        self.assertEqual(int_(mode[CC][VTIME]), 0)
 
     def test_setraw(self):
         setraw(sys.stdin, min=0, time=1)
@@ -39,8 +67,8 @@ class TermTests(unittest.TestCase):
         self.assertEqual(mode[LFLAG] & ICANON, 0)
         self.assertEqual(mode[LFLAG] & IEXTEN, 0)
         self.assertEqual(mode[LFLAG] & ISIG, 0)
-        self.assertEqual(mode[CC][VMIN], 0)
-        self.assertEqual(mode[CC][VTIME], 1)
+        self.assertEqual(int_(mode[CC][VMIN]), 0)
+        self.assertEqual(int_(mode[CC][VTIME]), 1)
 
     def test_setcbreak(self):
         setcbreak(sys.stdin, min=0, time=1)
@@ -49,8 +77,8 @@ class TermTests(unittest.TestCase):
         self.assertEqual(mode[LFLAG] & ICANON, 0)
         self.assertEqual(mode[LFLAG] & IEXTEN, IEXTEN)
         self.assertEqual(mode[LFLAG] & ISIG, ISIG)
-        self.assertEqual(mode[CC][VMIN], 0)
-        self.assertEqual(mode[CC][VTIME], 1)
+        self.assertEqual(int_(mode[CC][VMIN]), 0)
+        self.assertEqual(int_(mode[CC][VTIME]), 1)
 
     def test_rawmode(self):
         with rawmode(sys.stdin, min=0, time=1):
@@ -59,8 +87,8 @@ class TermTests(unittest.TestCase):
             self.assertEqual(mode[LFLAG] & ICANON, 0)
             self.assertEqual(mode[LFLAG] & IEXTEN, 0)
             self.assertEqual(mode[LFLAG] & ISIG, 0)
-            self.assertEqual(mode[CC][VMIN], 0)
-            self.assertEqual(mode[CC][VTIME], 1)
+            self.assertEqual(int_(mode[CC][VMIN]), 0)
+            self.assertEqual(int_(mode[CC][VTIME]), 1)
         self.test_defaults()
 
     def test_cbreakmode(self):
@@ -70,8 +98,8 @@ class TermTests(unittest.TestCase):
             self.assertEqual(mode[LFLAG] & ICANON, 0)
             self.assertEqual(mode[LFLAG] & IEXTEN, IEXTEN)
             self.assertEqual(mode[LFLAG] & ISIG, ISIG)
-            self.assertEqual(mode[CC][VMIN], 0)
-            self.assertEqual(mode[CC][VTIME], 1)
+            self.assertEqual(int_(mode[CC][VMIN]), 0)
+            self.assertEqual(int_(mode[CC][VTIME]), 1)
         self.test_defaults()
 
     def test_setraw_raises_on_bad_fd(self):
