@@ -26,7 +26,7 @@ setup(name='term',
           'Issue Tracker': 'https://github.com/stefanholek/term/issues',
           'Source Code': 'https://github.com/stefanholek/term',
       },
-      license='PSFL',
+      license='PSF-2.0',
       packages=find_packages(),
       zip_safe=True,
 )
