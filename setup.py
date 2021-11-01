@@ -28,4 +28,5 @@ setup(name='term',
       },
       license='PSF-2.0',
       packages=find_packages(),
+      python_requires='>=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*',
 )
