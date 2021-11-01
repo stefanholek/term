@@ -28,5 +28,4 @@ setup(name='term',
       },
       license='PSF-2.0',
       packages=find_packages(),
-      zip_safe=True,
 )
