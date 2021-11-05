@@ -13,6 +13,9 @@ Changelog
 - Remove deprecated ``test_suite`` from setup.py.
   [stefan]
 
+- Move metadata to setup.cfg and add a pyproject.toml file.
+  [stefan]
+
 - Fix escape sequence warning in byte string literal.
   [stefan]
 
