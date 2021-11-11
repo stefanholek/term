@@ -16,6 +16,9 @@ Changelog
 - Move metadata to setup.cfg and add a pyproject.toml file.
   [stefan]
 
+- Include tests in sdists but not in wheels.
+  [stefan]
+
 - Fix escape sequence warning in byte string literal.
   [stefan]
 
