@@ -125,15 +125,23 @@ class opentty(object):
             self.tty.close()
 
 
-def _readyx(stream):
-    """Read a CSI R response from stream."""
+def readto(stream, stopbyte):
+    """Read bytes from stream, up to and including stopbyte."""
     p = b''
     c = stream.read(1)
     while c:
         p += c
-        if c == b'R':
+        if c == stopbyte:
             break
         c = stream.read(1)
+    return p
+
+
+# linecol: printf '\033[6n' -> b'\x1b[24;1R'
+
+def _readyx(stream):
+    """Read a CSI R response from stream."""
+    p = readto(stream, b'R')
     if p:
         m = re.search(b'(\\d+);(\\d+)R$', p)
         if m is not None:
@@ -153,4 +161,79 @@ def getyx():
                 tty.write(b'\033[6n')
                 return _readyx(tty)
     return 0, 0
+
+
+# bgcolor: printf '\033]11;?\007' -> b'\x1b]11;rgb:ffff/ffff/ffff\x07'
+# fgcolor: printf '\033]10;?\007' -> b'\x1b]10;rgb:0000/0000/0000\x07'
+
+def _readcolor(stream):
+    """Read an RGB color response from stream."""
+    p = readto(stream, b'\x07')
+    if p:
+        m = re.search(b'rgb:(\\w+)/(\\w+)/(\\w+)\x07$', p)
+        if m is not None:
+            return int(m.group(1), 16), int(m.group(2), 16), int(m.group(3), 16)
+    return -1, -1, -1
+
+
+def getbgcolor():
+    """Return the terminal background color as (r:int, g:int, b:int) tuple.
+
+    All values are -1 if the device cannot be opened or does not
+    support the operation. Probably only works in xterm.
+    """
+    with opentty() as tty:
+        if tty is not None:
+            with cbreakmode(tty, min=0, time=TIMEOUT):
+                tty.write(b'\033]11;?\007')
+                return _readcolor(tty)
+    return -1, -1, -1
+
+
+def getfgcolor():
+    """Return the terminal foreground color as (r:int, g:int, b:int) tuple.
+
+    All values are -1 if the device cannot be opened or does not
+    support the operation. Probably only works in xterm.
+    """
+    with opentty() as tty:
+        if tty is not None:
+            with cbreakmode(tty, min=0, time=TIMEOUT):
+                tty.write(b'\033]10;?\007')
+                return _readcolor(tty)
+    return -1, -1, -1
+
+
+def isxterm():
+    """Return true if TERM environment variable starts with string 'xterm-'."""
+    return os.environ.get('TERM', '').startswith('xterm-')
+
+
+def luminance(rgb):
+    """Compute perceived brightness of RGB color tuple."""
+    return (0.2126*rgb[0] + 0.7152*rgb[1] + 0.0722*rgb[2])
+
+
+def islightmode():
+    """Return true if background color is lighter than foreground color.
+
+    Returns None if the device cannot be opened or
+    does not support xterm color queries.
+    """
+    bgcolor = getbgcolor()
+    if bgcolor[0] >= 0:
+        fgcolor = getfgcolor()
+        if fgcolor[0] >= 0:
+            return luminance(bgcolor) > luminance(fgcolor)
+
+
+def isdarkmode():
+    """Return true if background color is darker than foreground color.
+
+    Returns None if the device cannot be opened or
+    does not support xterm color queries.
+    """
+    mode = islightmode()
+    if mode is not None:
+        return not mode
 
