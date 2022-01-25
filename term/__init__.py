@@ -23,8 +23,8 @@ CC = 6
 # Open /dev/tty in binary mode.
 MODE = 'rb+'
 
-# Wait up to 3 seconds for a response.
-TIMEOUT = 30
+# Wait up to 0.2 seconds for a response.
+TIMEOUT = 2
 
 
 def setraw(fd, when=TCSAFLUSH, min=1, time=0):
