@@ -127,15 +127,18 @@ class opentty(object):
             self.tty.close()
 
 
-def readto(stream, stopbyte):
-    """Read bytes from stream, up to and including stopbyte."""
+def readto(fd, stopbyte):
+    """Read bytes from stream, up to and including stopbyte.
+
+    Returns an empty bytes object on EOF.
+    """
     p = b''
-    c = stream.read(1)
+    c = fd.read(1)
     while c:
         p += c
         if c == stopbyte:
             break
-        c = stream.read(1)
+        c = fd.read(1)
     return p
 
 
@@ -154,8 +157,8 @@ def _readyx(stream):
 def getyx():
     """Return the cursor position as 1-based (line, col) tuple.
 
-    Line and col are 0 if the device cannot be opened or the
-    terminal does not support DSR 6.
+    Line and col are 0 if the device cannot be opened or
+    does not support DSR 6 (CPR).
     """
     with opentty() as tty:
         if tty is not None:
@@ -179,7 +182,7 @@ def _readcolor(stream):
 
 
 def getbgcolor():
-    """Return the terminal background color as (r:int, g:int, b:int) tuple.
+    """Return the terminal background color as (r, g, b) tuple.
 
     All values are -1 if the device cannot be opened or does not
     support the operation. Probably only works in xterm.
@@ -193,7 +196,7 @@ def getbgcolor():
 
 
 def getfgcolor():
-    """Return the terminal foreground color as (r:int, g:int, b:int) tuple.
+    """Return the terminal foreground color as (r, g, b) tuple.
 
     All values are -1 if the device cannot be opened or does not
     support the operation. Probably only works in xterm.
@@ -207,7 +210,7 @@ def getfgcolor():
 
 
 def isxterm():
-    """Return true if TERM environment variable starts with string 'xterm-'."""
+    """Return true if the TERM environment variable starts with 'xterm-'."""
     return os.environ.get('TERM', '').startswith('xterm-')
 
 
@@ -217,10 +220,10 @@ def luminance(rgb):
 
 
 def islightmode():
-    """Return true if background color is lighter than foreground color.
+    """Return true if the background color is lighter than the foreground color.
 
     Returns None if the device cannot be opened or
-    does not support xterm color queries.
+    does not support OSC color requests.
     """
     bgcolor = getbgcolor()
     if bgcolor[0] >= 0:
@@ -230,12 +233,14 @@ def islightmode():
 
 
 def isdarkmode():
-    """Return true if background color is darker than foreground color.
+    """Return true if the background color is darker than the foreground color.
 
     Returns None if the device cannot be opened or
-    does not support xterm color queries.
+    does not support OSC color requests.
     """
-    mode = islightmode()
-    if mode is not None:
-        return not mode
+    bgcolor = getbgcolor()
+    if bgcolor[0] >= 0:
+        fgcolor = getfgcolor()
+        if fgcolor[0] >= 0:
+            return luminance(bgcolor) < luminance(fgcolor)
 

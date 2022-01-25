@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 ===============================================
-term |version| -- Terminal Control
+term |version| -- Terminal Utilities
 ===============================================
 
 .. toctree::
@@ -17,19 +17,30 @@ The :mod:`term` module is an enhanced version of the :mod:`tty <py3k:tty>` modul
 API Documentation
 =================
 
+Terminal Control
+================
+
 .. autofunction:: term.setraw(fd, when=TCSAFLUSH, min=1, time=0)
 .. autofunction:: term.setcbreak(fd, when=TCSAFLUSH, min=1, time=0)
 .. autofunction:: term.rawmode(fd, when=TCSAFLUSH, min=1, time=0)
 .. autofunction:: term.cbreakmode(fd, when=TCSAFLUSH, min=1, time=0)
 .. autofunction:: term.opentty
+.. autofunction:: term.readto
+
+High-level Functions
+====================
+
 .. autofunction:: term.getyx
+.. autofunction:: term.isxterm
+.. autofunction:: term.islightmode
+.. autofunction:: term.isdarkmode
 
 .. seealso::
 
    Module :mod:`termios <py3k:termios>`
       Low-level terminal control interface.
 
-   `Xterm Control Sequences <https://www.xfree86.org/4.8.0/ctlseqs.html>`_
+   `Xterm Control Sequences <https://invisible-island.net/xterm/ctlseqs/ctlseqs.html>`_
       Detailed list of escape sequences accepted by xterm.
 
 Indices and Tables
