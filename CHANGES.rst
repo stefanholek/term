@@ -16,7 +16,7 @@ Changelog
 - Move metadata to setup.cfg and add a pyproject.toml file.
   [stefan]
 
-- Include tests in sdists but not in wheels.
+- Include tests in sdist but not in wheel.
   [stefan]
 
 - Fix escape sequence warning in byte string literal.
@@ -28,6 +28,9 @@ Changelog
 - Officially change opentty's bufsize argument default from 1 to -1.
   Under Python 3, 1 has effectively meant -1 all along but Python 3.8
   now issues a warning.
+  [stefan]
+
+- Add readto, isxterm, islightmode, and isdarkmode.
   [stefan]
 
 2.3 - 2019-02-08

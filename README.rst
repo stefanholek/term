@@ -19,6 +19,9 @@ without having to resort to curses.
 Package Contents
 ================
 
+Terminal Control
+----------------
+
 setraw(fd, when=TCSAFLUSH, min=1, time=0)
     Put the terminal in raw mode.
 
@@ -35,15 +38,32 @@ opentty(bufsize=-1)
     Context manager returning an rw stream connected to /dev/tty.
     The stream is None if the device cannot be opened.
 
+readto(fd, stopbyte):
+    Read bytes from stream, up to and including stopbyte.
+
+High-level Functions
+--------------------
+
 getyx()
     Return the cursor position as 1-based (line, col) tuple.
     Line and col are 0 if the device cannot be opened or the terminal
     does not support DSR 6.
 
+isxterm()
+    Return true if the TERM environment variable starts with 'xterm-'.
+
+islightmode()
+    Return true if the background color is lighter than the foreground color.
+    May return None if the terminal does not support OSC color requests.
+
+isdarkmode()
+    Return true if the background color is darker than the foreground color.
+    May return None if the terminal does not support OSC color requests.
+
 Examples
 ========
 
-To resize the terminal window we enter cbreak mode and write the new
+To resize the terminal window, enter cbreak mode and write the new
 dimensions to the tty:
 
 .. code-block:: python
@@ -57,17 +77,25 @@ dimensions to the tty:
 
             print('terminal resized')
 
-You may also want to look at the `source code`_ of getyx().
+The getyx function may be implemented like this:
 
-.. _`source code`: https://github.com/stefanholek/term/blob/master/term/__init__.py#L143
+.. code-block:: python
 
-Caveat
-======
+    from re import search
+    from term import opentty, cbreakmode, readto
 
-The terminal must be in canonical mode before any of the functions and
-context managers can be used. They are not meant for switching between
-raw and cbreak modes. Nesting context managers of the same type is allowed
-though.
+    def getyx():
+        with opentty() as tty:
+            if tty is not None:
+                with cbreakmode(tty, min=0, time=2):
+                    tty.write(b'\033[6n')
+                    p = readto(tty, b'R')
+                    if p:
+                        m = search(b'(\\d+);(\\d+)R$', p)
+                        if m is not None:
+                            return int(m.group(1)), int(m.group(2))
+        return 0, 0
+
 
 Documentation
 =============
