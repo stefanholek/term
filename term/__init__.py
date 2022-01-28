@@ -8,7 +8,7 @@ import re
 
 from termios import *
 
-__all__ = ["setraw", "setcbreak", "rawmode", "cbreakmode", "opentty",
+__all__ = ["setraw", "setcbreak", "rawmode", "cbreakmode", "opentty", "readto",
            "IFLAG", "OFLAG", "CFLAG", "LFLAG", "ISPEED", "OSPEED", "CC",
            "getyx", "getbgcolor", "getfgcolor",
            "isxterm", "islightmode", "isdarkmode"]
@@ -175,7 +175,7 @@ def _readcolor(stream):
     """Read an RGB color response from stream."""
     p = readto(stream, b'\x07')
     if p:
-        m = re.search(b'rgb:(\\w+)/(\\w+)/(\\w+)\x07$', p)
+        m = re.search(b'rgb:([0-9a-fA-F]+)/([0-9a-fA-F]+)/([0-9a-fA-F]+)\007$', p)
         if m is not None:
             return int(m.group(1), 16), int(m.group(2), 16), int(m.group(3), 16)
     return -1, -1, -1

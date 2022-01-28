@@ -1,4 +1,5 @@
 import sys
+import os
 import unittest
 import termios
 
@@ -8,6 +9,8 @@ from term import *
 from term import MODE
 from term import _opentty
 from term import _readyx
+from term import _readcolor
+from term import luminance
 
 if sys.version_info[0] >= 3:
     from io import BytesIO
@@ -21,6 +24,16 @@ def int_(x):
     if not isinstance(x, int):
         x = ord(x)
     return x
+
+
+class setterm(object):
+    def __init__(self, val):
+        self._val = val
+    def __enter__(self):
+        self._saved = os.environ.get('TERM', '')
+        os.environ['TERM'] = self._val
+    def __exit__(self, *ignored):
+        os.environ['TERM'] = self._saved
 
 
 class IntegerTests(unittest.TestCase):
@@ -185,4 +198,78 @@ class TermTests(unittest.TestCase):
         line, col = getyx()
         self.assertNotEqual(line, 0)
         self.assertNotEqual(col, 0)
+
+    def test_readto_3(self):
+        stream = BytesIO(b'123456789');
+        self.assertEqual(readto(stream, b'3'), b'123')
+
+    def test_readto_7(self):
+        stream = BytesIO(b'123456789');
+        self.assertEqual(readto(stream, b'7'), b'1234567')
+
+    def test_readto_end_if_bad_stopbyte(self):
+        stream = BytesIO(b'123456789');
+        self.assertEqual(readto(stream, b'0'), b'123456789')
+
+    def test_readto_end_if_empty_stopbyte(self):
+        stream = BytesIO(b'123456789');
+        self.assertEqual(readto(stream, b''), b'123456789')
+
+    def test_readto_empty_stream(self):
+        stream = BytesIO(b'');
+        self.assertEqual(readto(stream, b'3'), b'')
+
+    def test__readcolor(self):
+        stream = BytesIO(b'\033]10;rgb:00ff/ff00/0ff0\007');
+        self.assertEqual(_readcolor(stream), (255, 65280, 4080))
+
+    def test__readcolor_empty(self):
+        stream = BytesIO();
+        self.assertEqual(_readcolor(stream), (-1, -1, -1))
+
+    def test__readcolor_too_short(self):
+        stream = BytesIO(b'\033]10;rgb:00ff/ff00/0ff0');
+        self.assertEqual(_readcolor(stream), (-1, -1, -1))
+
+    def test__readcolor_not_a_hex_number(self):
+        stream = BytesIO(b'\033]10;rgb:00ff/ff00/0gg0\007');
+        self.assertEqual(_readcolor(stream), (-1, -1, -1))
+
+    def test_luminance_black(self):
+        self.assertEqual(luminance((0, 0, 0)), 0)
+
+    def test_luminance_white(self):
+        self.assertEqual(luminance((65535, 65535, 65535)), 65535)
+
+    def test_luminance_oceanblue(self):
+        self.assertAlmostEqual(luminance((11103, 26278, 51575)), 24878.2384)
+
+    def test_luminance_sandred(self):
+        self.assertAlmostEqual(luminance((36524, 13538, 10094)), 18176.1668)
+
+    def test_getbgcolor(self):
+        rgb = getbgcolor()
+        self.assertNotEqual(rgb, (-1, -1, -1))
+
+    def test_getfgcolor(self):
+        rgb = getfgcolor()
+        self.assertNotEqual(rgb, (-1, -1, -1))
+
+    def test_islightmode(self):
+        self.assertNotEqual(islightmode(), None)
+
+    def test_isdarkmode(self):
+        self.assertNotEqual(isdarkmode(), None)
+
+    def test_isxterm(self):
+        with setterm('xterm-color'):
+            self.assertEqual(isxterm(), True)
+        with setterm('xterm-256color'):
+            self.assertEqual(isxterm(), True)
+
+    def test_is_not_xterm_(self):
+        with setterm('xterm'):
+            self.assertEqual(isxterm(), False)
+        with setterm('ansi'):
+            self.assertEqual(isxterm(), False)
 
