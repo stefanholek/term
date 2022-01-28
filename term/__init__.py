@@ -173,7 +173,7 @@ def getyx():
 
 def _readcolor(stream):
     """Read an RGB color response from stream."""
-    p = readto(stream, b'\x07')
+    p = readto(stream, b'\007')
     if p:
         m = re.search(b'rgb:([0-9a-fA-F]+)/([0-9a-fA-F]+)/([0-9a-fA-F]+)\007$', p)
         if m is not None:
