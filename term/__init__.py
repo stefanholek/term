@@ -10,7 +10,7 @@ from termios import *
 
 __all__ = ["setraw", "setcbreak", "rawmode", "cbreakmode", "opentty", "readto",
            "IFLAG", "OFLAG", "CFLAG", "LFLAG", "ISPEED", "OSPEED", "CC",
-           "getyx", "getbgcolor", "getfgcolor",
+           "getyx", "getbgcolor", "getfgcolor", 'luminance',
            "isxterm", "islightmode", "isdarkmode"]
 
 # Indexes for termios list.
