@@ -10,12 +10,13 @@ from term import MODE
 from term import _opentty
 from term import _readyx
 from term import _readcolor
-from term import luminance
 
 if sys.version_info[0] >= 3:
     from io import BytesIO
+    from io import StringIO
 else:
     from StringIO import StringIO as BytesIO
+    from StringIO import StringIO
 
 
 # CC members are of type unsigned char which corresponds to bytes.
@@ -207,6 +208,14 @@ class TermTests(unittest.TestCase):
         stream = BytesIO(b'123456789');
         self.assertEqual(readto(stream, b'7'), b'1234567')
 
+    def test_readto_4_or_5(self):
+        stream = BytesIO(b'123456789');
+        self.assertEqual(readto(stream, (b'5', b'4')), b'1234')
+
+    def test_readto_456(self):
+        stream = BytesIO(b'123456789');
+        self.assertEqual(readto(stream, b'456'), b'123456')
+
     def test_readto_end_if_bad_stopbyte(self):
         stream = BytesIO(b'123456789');
         self.assertEqual(readto(stream, b'0'), b'123456789')
@@ -215,9 +224,45 @@ class TermTests(unittest.TestCase):
         stream = BytesIO(b'123456789');
         self.assertEqual(readto(stream, b''), b'123456789')
 
+    def test_readto_end_if_empty_stopbyte_in_tuple(self):
+        stream = BytesIO(b'123456789');
+        self.assertEqual(readto(stream, (b'',)), b'123456789')
+
+    def test_readto_end_if_empty_tuple(self):
+        stream = BytesIO(b'123456789');
+        self.assertEqual(readto(stream, ()), b'123456789')
+
     def test_readto_empty_stream(self):
         stream = BytesIO(b'');
         self.assertEqual(readto(stream, b'3'), b'')
+
+    def test_stringio_readto_3(self):
+        stream = StringIO('123456789');
+        self.assertEqual(readto(stream, '3'), '123')
+
+    def test_stringio_readto_4_or_5(self):
+        stream = StringIO('123456789');
+        self.assertEqual(readto(stream, ('5', '4')), '1234')
+
+    def test_stringio_readto_456(self):
+        stream = StringIO('123456789');
+        self.assertEqual(readto(stream, '456'), '123456')
+
+    def test_stringio_readto_end_if_empty_stopchar(self):
+        stream = StringIO('123456789');
+        self.assertEqual(readto(stream, ''), '123456789')
+
+    def test_stringio_readto_end_if_empty_stopchar_in_tuple(self):
+        stream = StringIO('123456789');
+        self.assertEqual(readto(stream, ('',)), '123456789')
+
+    def test_stringio_readto_end_if_empty_tuple(self):
+        stream = StringIO('123456789');
+        self.assertEqual(readto(stream, ()), '123456789')
+
+    def test_stringio_readto_empty_stream(self):
+        stream = StringIO('');
+        self.assertEqual(readto(stream, '3'), '')
 
     def test__readcolor(self):
         stream = BytesIO(b'\033]10;rgb:00ff/ff00/0ff0\007');
@@ -266,10 +311,14 @@ class TermTests(unittest.TestCase):
             self.assertEqual(isxterm(), True)
         with setterm('xterm-256color'):
             self.assertEqual(isxterm(), True)
+        with setterm('xterm-'):
+            self.assertEqual(isxterm(), True)
 
     def test_is_not_xterm_(self):
         with setterm('xterm'):
             self.assertEqual(isxterm(), False)
         with setterm('ansi'):
+            self.assertEqual(isxterm(), False)
+        with setterm('vt100'):
             self.assertEqual(isxterm(), False)
 
