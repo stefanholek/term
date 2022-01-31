@@ -127,18 +127,45 @@ class opentty(object):
             self.tty.close()
 
 
-def readto(fd, stopbyte):
+def _readto(stream, stopbyte):
     """Read bytes from stream, up to and including stopbyte.
 
     Returns an empty bytes object on EOF.
     """
     p = b''
-    c = fd.read(1)
+    c = stream.read(1)
     while c:
         p += c
         if c == stopbyte:
             break
-        c = fd.read(1)
+        c = stream.read(1)
+    return p
+
+
+def readto(stream, endswith):
+    """Read bytes or characters from stream until buffer.endswith(endswith)
+    is true.
+
+    The endswith argument may be a single suffix or a tuple of
+    suffixes to try.
+    Suffixes are of type bytes or str depending on the stream.
+    """
+    if isinstance(endswith, (bytes, str)):
+        endswith = (endswith,)
+
+    c = stream.read(1)
+    if isinstance(c, str):
+        p = ''
+        endswith = tuple(x for x in endswith if not isinstance(x, str) or x)
+    else:
+        p = b''
+        endswith = tuple(x for x in endswith if not isinstance(x, bytes) or x)
+
+    while c:
+        p += c
+        if p.endswith(endswith):
+            break
+        c = stream.read(1)
     return p
 
 
