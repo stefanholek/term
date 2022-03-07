@@ -1,2 +1,2 @@
-include LICENSE tox.ini *.rst
+include LICENSE tox.ini .pylintrc *.rst
 recursive-include term/tests *.py
