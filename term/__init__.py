@@ -273,3 +273,34 @@ def isdarkmode():
         if fgcolor[0] >= 0:
             return luminance(bgcolor) < luminance(fgcolor)
 
+
+def getnumcolors():
+    """Return the number of colors supported by the terminal.
+
+    The result is 0 if the device cannot be opened
+    or has no color support.
+    """
+    # pylint: disable=import-outside-toplevel
+    import curses
+
+    with opentty() as tty:
+        if tty is not None:
+            try:
+                curses.setupterm(name(), tty.fileno())
+                colors = curses.tigetnum('colors')
+                if colors >= 0:
+                    return colors
+            except curses.error:
+                pass
+    return 0
+
+
+def iscolor():
+    """Return true if the terminal has color support."""
+    return getnumcolors() > 0
+
+
+def is256color():
+    """Return true if the terminal has >= 256 color support."""
+    return getnumcolors() >= 256
+
