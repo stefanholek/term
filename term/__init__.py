@@ -85,7 +85,7 @@ class cbreakmode(object):
         tcsetattr(self.fd, TCSAFLUSH, self.savedmode)
 
 
-def _opentty(device, bufsize):
+def _opentty(device, bufsize, mode=MODE):
     """Open a tty device for reading and writing."""
     fd = os.open(device, os.O_RDWR | os.O_NOCTTY)
 
@@ -99,9 +99,9 @@ def _opentty(device, bufsize):
             os.lseek(fd, 0, os.SEEK_CUR)
         except OSError:
             bufsize = 0
-        return open(fd, MODE, bufsize)
+        return open(fd, mode, bufsize)
     else:
-        return os.fdopen(fd, MODE, bufsize)
+        return os.fdopen(fd, mode, bufsize)
 
 
 class opentty(object):
@@ -111,13 +111,14 @@ class opentty(object):
     """
     device = '/dev/tty'
 
-    def __init__(self, bufsize=-1):
+    def __init__(self, bufsize=-1, mode=MODE):
         self.bufsize = bufsize
+        self.mode = mode
 
     def __enter__(self):
         self.tty = None
         try:
-            self.tty = _opentty(self.device, self.bufsize)
+            self.tty = _opentty(self.device, self.bufsize, self.mode)
         except EnvironmentError:
             pass
         return self.tty
