@@ -244,7 +244,8 @@ def isxterm():
 
 def luminance(rgb):
     """Compute perceived brightness of RGB color tuple."""
-    return (0.2126*rgb[0] + 0.7152*rgb[1] + 0.0722*rgb[2])
+    # https://alienryderflex.com/hsp.html
+    return sqrt(0.299*rgb[0]**2 + 0.587*rgb[1]**2 + 0.114*rgb[2]**2)
 
 
 def islightmode():
