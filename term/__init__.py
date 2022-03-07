@@ -6,12 +6,13 @@ import sys
 import os
 import re
 
+from math import sqrt
 from termios import *
 
-__all__ = ["setraw", "setcbreak", "rawmode", "cbreakmode", "opentty", "readto",
+__all__ = ["setraw", "setcbreak", "rawmode", "cbreakmode",
            "IFLAG", "OFLAG", "CFLAG", "LFLAG", "ISPEED", "OSPEED", "CC",
-           "getyx", "getbgcolor", "getfgcolor", 'luminance',
-           "isxterm", "islightmode", "isdarkmode"]
+           "opentty", "readto", "TIMEOUT",
+           "getyx"] # BBB
 
 # Indexes for termios list.
 IFLAG = 0
@@ -22,15 +23,20 @@ ISPEED = 4
 OSPEED = 5
 CC = 6
 
-# Open /dev/tty in binary mode.
-MODE = 'rb+'
+# Open /dev/tty in binary mode by default.
+MODE = 'r+b'
 
 # Wait up to 0.2 seconds for a response.
 TIMEOUT = 2
 
 
 def setraw(fd, when=TCSAFLUSH, min=1, time=0):
-    """Put the terminal in raw mode."""
+    """Put the terminal in raw mode.
+
+    Wait until at least `min` bytes or characters have been read.
+    If `min` is 0, give up after `time` (in 1/10ths of a second)
+    without data becoming available.
+    """
     mode = tcgetattr(fd)
     mode[IFLAG] = mode[IFLAG] & ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON)
     mode[OFLAG] = mode[OFLAG] & ~(OPOST)
@@ -43,7 +49,12 @@ def setraw(fd, when=TCSAFLUSH, min=1, time=0):
 
 
 def setcbreak(fd, when=TCSAFLUSH, min=1, time=0):
-    """Put the terminal in cbreak mode."""
+    """Put the terminal in cbreak mode.
+
+    Wait until at least `min` bytes or characters have been read.
+    If `min` is 0, give up after `time` (in 1/10ths of a second)
+    without data becoming available.
+    """
     mode = tcgetattr(fd)
     mode[LFLAG] = mode[LFLAG] & ~(ECHO | ICANON)
     mode[CC][VMIN] = min
@@ -52,13 +63,17 @@ def setcbreak(fd, when=TCSAFLUSH, min=1, time=0):
 
 
 class rawmode(object):
-    """Context manager to put the terminal in raw mode."""
+    """Context manager to put the terminal in raw mode.
+
+    The current mode is saved and restored on exit.
+    """
 
     def __init__(self, fd, when=TCSAFLUSH, min=1, time=0):
         self.fd = fd
         self.when = when
         self.min = min
         self.time = time
+        self.savedmode = None
 
     def __enter__(self):
         self.savedmode = tcgetattr(self.fd)
@@ -69,13 +84,17 @@ class rawmode(object):
 
 
 class cbreakmode(object):
-    """Context manager to put the terminal in cbreak mode."""
+    """Context manager to put the terminal in cbreak mode.
+
+    The current mode is saved and restored on exit.
+    """
 
     def __init__(self, fd, when=TCSAFLUSH, min=1, time=0):
         self.fd = fd
         self.when = when
         self.min = min
         self.time = time
+        self.savedmode = None
 
     def __enter__(self):
         self.savedmode = tcgetattr(self.fd)
@@ -105,15 +124,17 @@ def _opentty(device, bufsize, mode=MODE):
 
 
 class opentty(object):
-    """Context manager returning an rw stream connected to /dev/tty.
+    """Context manager returning a new rw stream connected to /dev/tty.
 
     The stream is None if the device cannot be opened.
+    The `mode` argument must be 'r+b' (default) or 'r+'.
     """
     device = '/dev/tty'
 
     def __init__(self, bufsize=-1, mode=MODE):
         self.bufsize = bufsize
         self.mode = mode
+        self.tty = None
 
     def __enter__(self):
         self.tty = None
@@ -144,14 +165,15 @@ def _readto(stream, stopbyte):
 
 
 def readto(stream, endswith):
-    """Read bytes or characters from stream until buffer.endswith(endswith)
+    """Read bytes or characters from `stream` until buffer.endswith(`endswith`)
     is true.
 
-    The endswith argument may be a single suffix or a tuple of
+    The `endswith` argument may be a single suffix or a tuple of
     suffixes to try.
-    Suffixes are of type bytes or str depending on the stream.
+    Suffixes must be bytes or str depending on the stream.
+    Empty suffixes are ignored.
     """
-    if isinstance(endswith, (bytes, str)):
+    if not isinstance(endswith, (tuple, list)):
         endswith = (endswith,)
 
     c = stream.read(1)
@@ -173,7 +195,7 @@ def readto(stream, endswith):
 # linecol: printf '\033[6n' -> b'\x1b[24;1R'
 
 def _readyx(stream):
-    """Read a CSI R response from stream."""
+    """Read a CPR response from stream."""
     p = readto(stream, b'R')
     if p:
         m = re.search(b'(\\d+);(\\d+)R$', p)
@@ -186,7 +208,7 @@ def getyx():
     """Return the cursor position as 1-based (line, col) tuple.
 
     Line and col are 0 if the device cannot be opened or
-    does not support DSR 6 (CPR).
+    does not support DSR 6.
     """
     with opentty() as tty:
         if tty is not None:
@@ -196,8 +218,45 @@ def getyx():
     return 0, 0
 
 
-# bgcolor: printf '\033]11;?\007' -> b'\x1b]11;rgb:ffff/ffff/ffff\x07'
+def getyx_text_mode():
+    """Return the cursor position as 1-based (line, col) tuple.
+
+    Line and col are 0 if the terminal does not support
+    DSR 6.
+    """
+    with opentty(mode='r+') as tty:
+        if tty is not None:
+            with cbreakmode(tty, min=0, time=TIMEOUT):
+                tty.write('\033[6n')
+                tty.flush()
+                p = readto(tty, 'R')
+                if p:
+                    m = re.search(r'(\d+);(\d+)R$', p)
+                    if m is not None:
+                        return int(m.group(1)), int(m.group(2))
+    return 0, 0
+
+
+def getyx_stdin_stdout():
+    """Return the cursor position as 1-based (line, col) tuple.
+
+    Line and col are 0 if the terminal does not support
+    DSR 6.
+    """
+    if sys.stdin.isatty() and sys.stdout.isatty():
+        with cbreakmode(sys.stdin, min=0, time=TIMEOUT):
+            sys.stdout.write('\033[6n')
+            sys.stdout.flush()
+            p = readto(sys.stdin, 'R')
+            if p:
+                m = re.search(r'(\d+);(\d+)R$', p)
+                if m is not None:
+                    return int(m.group(1)), int(m.group(2))
+    return 0, 0
+
+
 # fgcolor: printf '\033]10;?\007' -> b'\x1b]10;rgb:0000/0000/0000\x07'
+# bgcolor: printf '\033]11;?\007' -> b'\x1b]11;rgb:ffff/ffff/ffff\x07'
 
 def _readcolor(stream):
     """Read an RGB color response from stream."""
@@ -209,25 +268,11 @@ def _readcolor(stream):
     return -1, -1, -1
 
 
-def getbgcolor():
-    """Return the terminal background color as (r, g, b) tuple.
-
-    All values are -1 if the device cannot be opened or does not
-    support the operation. Probably only works in xterm.
-    """
-    with opentty() as tty:
-        if tty is not None:
-            with cbreakmode(tty, min=0, time=TIMEOUT):
-                tty.write(b'\033]11;?\007')
-                return _readcolor(tty)
-    return -1, -1, -1
-
-
 def getfgcolor():
     """Return the terminal foreground color as (r, g, b) tuple.
 
     All values are -1 if the device cannot be opened or does not
-    support the operation. Probably only works in xterm.
+    support OSC 10.
     """
     with opentty() as tty:
         if tty is not None:
@@ -237,9 +282,28 @@ def getfgcolor():
     return -1, -1, -1
 
 
+def getbgcolor():
+    """Return the terminal background color as (r, g, b) tuple.
+
+    All values are -1 if the device cannot be opened or does not
+    support OSC 11.
+    """
+    with opentty() as tty:
+        if tty is not None:
+            with cbreakmode(tty, min=0, time=TIMEOUT):
+                tty.write(b'\033]11;?\007')
+                return _readcolor(tty)
+    return -1, -1, -1
+
+
+def name():
+    """Return the TERM environment variable."""
+    return os.environ.get('TERM', '')
+
+
 def isxterm():
-    """Return true if the TERM environment variable starts with 'xterm-'."""
-    return os.environ.get('TERM', '').startswith('xterm-')
+    """Return true if the TERM environment variable starts with 'xterm'."""
+    return name().startswith('xterm')
 
 
 def luminance(rgb):
@@ -251,8 +315,8 @@ def luminance(rgb):
 def islightmode():
     """Return true if the background color is lighter than the foreground color.
 
-    Returns None if the device cannot be opened or
-    does not support OSC color requests.
+    May return None if the device cannot be opened or
+    does not support OSC 10 & 11.
     """
     bgcolor = getbgcolor()
     if bgcolor[0] >= 0:
@@ -264,8 +328,8 @@ def islightmode():
 def isdarkmode():
     """Return true if the background color is darker than the foreground color.
 
-    Returns None if the device cannot be opened or
-    does not support OSC color requests.
+    May return None if the device cannot be opened or
+    does not support OSC 10 & 11.
     """
     bgcolor = getbgcolor()
     if bgcolor[0] >= 0:
@@ -303,4 +367,18 @@ def iscolor():
 def is256color():
     """Return true if the terminal has >= 256 color support."""
     return getnumcolors() >= 256
+
+
+# Help autosphinx's autoattribute find the constants...
+class term:
+    # pylint: disable=too-few-public-methods
+    IFLAG = IFLAG
+    OFLAG = OFLAG
+    CFLAG = CFLAG
+    LFLAG = LFLAG
+    ISPEED = ISPEED
+    OSPEED = OSPEED
+    CC = CC
+    MODE = MODE
+    TIMEOUT = TIMEOUT
 
