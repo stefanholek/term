@@ -30,7 +30,7 @@ Changelog
   now issues a warning.
   [stefan]
 
-- Add readto, isxterm, islightmode, and isdarkmode.
+- Add readto, getfgcolor, getbgcolor, islightmode, and isdarkmode.
   [stefan]
 
 2.3 - 2019-02-08
