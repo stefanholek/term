@@ -63,7 +63,7 @@ confidence=
 disable=missing-function-docstring,
         missing-class-docstring,
         missing-module-docstring,
-        no-self-use,
+        #no-self-use,
         invalid-name,
         inconsistent-return-statements,
         duplicate-code,
