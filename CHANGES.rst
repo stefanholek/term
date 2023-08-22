@@ -4,6 +4,20 @@ Changelog
 2.5 - Unreleased
 ----------------
 
+- Update tox.ini for latest tox.
+  [stefan]
+
+- Add .readthedocs.yaml file.
+  [stefan]
+
+- Pin sphinx and sphinx-rtd-theme versions in docs extra.
+  [stefan]
+
+- Add testing extra which installs pylint.
+  [stefan]
+
+- Update .pylintrc for latest pylint.
+  [stefan]
 
 2.4 - 2022-03-07
 ----------------
