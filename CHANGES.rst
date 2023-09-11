@@ -13,7 +13,7 @@ Changelog
 - Pin sphinx and sphinx-rtd-theme versions in docs extra.
   [stefan]
 
-- Add testing extra which installs pylint.
+- Add pylint extra which installs pylint.
   [stefan]
 
 - Update .pylintrc for latest pylint.
