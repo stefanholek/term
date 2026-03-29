@@ -4,6 +4,8 @@ Changelog
 2.6 - Unreleased
 ----------------
 
+- Remove support for universal wheels.
+  [stefan]
 
 2.5 - 2023-09-14
 ----------------
