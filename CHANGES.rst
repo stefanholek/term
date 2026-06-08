@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.6 - Unreleased
+3.0 - Unreleased
 ----------------
 
 - Remove deprecated license classifier.
