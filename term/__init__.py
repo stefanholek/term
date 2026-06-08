@@ -112,15 +112,12 @@ def _opentty(device, bufsize, mode=MODE):
     if bufsize == 1:
         bufsize = -1
 
-    if sys.version_info[0] >= 3:
-        # Buffering requires a seekable device
-        try:
-            os.lseek(fd, 0, os.SEEK_CUR)
-        except OSError:
-            bufsize = 0
-        return open(fd, mode, bufsize)
-    else:
-        return os.fdopen(fd, mode, bufsize)
+    # Buffering requires a seekable device
+    try:
+        os.lseek(fd, 0, os.SEEK_CUR)
+    except OSError:
+        bufsize = 0
+    return open(fd, mode, bufsize)
 
 
 class opentty(object):

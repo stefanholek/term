@@ -1,7 +1,5 @@
 # python -m term
 
-from __future__ import print_function
-
 import term
 
 
