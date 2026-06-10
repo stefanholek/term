@@ -36,7 +36,7 @@ def int_(x):
     return x
 
 
-class setterm(object):
+class setterm():
     def __init__(self, val):
         self._val = val
         self._saved = None

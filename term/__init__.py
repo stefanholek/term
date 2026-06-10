@@ -62,7 +62,7 @@ def setcbreak(fd, when=TCSAFLUSH, min=1, time=0):
     tcsetattr(fd, when, mode)
 
 
-class rawmode(object):
+class rawmode():
     """Context manager to put the terminal in raw mode.
 
     The current mode is saved and restored on exit.
@@ -83,7 +83,7 @@ class rawmode(object):
         tcsetattr(self.fd, TCSAFLUSH, self.savedmode)
 
 
-class cbreakmode(object):
+class cbreakmode():
     """Context manager to put the terminal in cbreak mode.
 
     The current mode is saved and restored on exit.
@@ -120,7 +120,7 @@ def _opentty(device, bufsize, mode=MODE):
     return open(fd, mode, bufsize)
 
 
-class opentty(object):
+class opentty():
     """Context manager returning a new rw stream connected to /dev/tty.
 
     The stream is None if the device cannot be opened.
