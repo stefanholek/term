@@ -7,6 +7,7 @@ import os
 import re
 
 from math import sqrt
+# ruff: noqa: F403, F405
 from termios import *
 
 __all__ = ["setraw", "setcbreak", "rawmode", "cbreakmode",
@@ -341,8 +342,7 @@ def getnumcolors():
     The result is 0 if the device cannot be opened
     or has no color support.
     """
-    # pylint: disable=import-outside-toplevel
-    import curses
+    import curses  # noqa: PLC0415
 
     with opentty() as tty:
         if tty is not None:
@@ -368,7 +368,6 @@ def is256color():
 
 # Help autosphinx's autoattribute find the constants...
 class term:
-    # pylint: disable=too-few-public-methods
     IFLAG = IFLAG
     OFLAG = OFLAG
     CFLAG = CFLAG

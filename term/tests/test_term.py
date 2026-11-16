@@ -3,8 +3,7 @@ import os
 import unittest
 import termios
 
-# pylint: disable=wildcard-import
-# pylint: disable=unused-wildcard-import
+# ruff: noqa: F403, F405
 from termios import *
 from term import *
 
@@ -67,8 +66,7 @@ class IntegerTests(unittest.TestCase):
         self.assertRaises(TypeError, int_, b'32767')
 
 
-class TermTests(unittest.TestCase):
-    # pylint: disable=too-many-public-methods
+class TermTests(unittest.TestCase):  # noqa: PLR0904
 
     def setUp(self):
         self.savedmode = tcgetattr(sys.stdin)
