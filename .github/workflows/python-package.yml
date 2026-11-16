@@ -81,5 +81,5 @@ jobs:
         run: python -m pip list
 
       - name: Run linter
-        run: python -m ruff check term
+        run: python -m ruff check --output-format github term
 
