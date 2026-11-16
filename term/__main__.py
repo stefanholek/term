@@ -1,6 +1,7 @@
 # python -m term
 
-import term
+import term  # noqa: I001
+
 
 if __name__ == '__main__':
     print('term.getyx', term.getyx())

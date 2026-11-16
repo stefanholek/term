@@ -2,6 +2,7 @@ import os
 import sys
 import termios
 import unittest
+
 from io import BytesIO, StringIO
 
 # ruff: noqa: F403, F405
