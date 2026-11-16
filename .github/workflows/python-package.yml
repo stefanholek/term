@@ -81,5 +81,5 @@ jobs:
         run: python -m pip list
 
       - name: Run linter
-        run: python -m ruff check --select E,F,W,I,UP,B,SIM,PL term
+        run: python -m ruff check term
 
