@@ -2,11 +2,12 @@
 
 # Authors: Steen Lumholt, Stefan H. Holek
 
-import sys
+import contextlib
 import os
 import re
-
+import sys
 from math import sqrt
+
 # ruff: noqa: F403, F405
 from termios import *
 
@@ -63,7 +64,7 @@ def setcbreak(fd, when=TCSAFLUSH, min=1, time=0):
     tcsetattr(fd, when, mode)
 
 
-class rawmode():
+class rawmode:
     """Context manager to put the terminal in raw mode.
 
     The current mode is saved and restored on exit.
@@ -84,7 +85,7 @@ class rawmode():
         tcsetattr(self.fd, TCSAFLUSH, self.savedmode)
 
 
-class cbreakmode():
+class cbreakmode:
     """Context manager to put the terminal in cbreak mode.
 
     The current mode is saved and restored on exit.
@@ -121,7 +122,7 @@ def _opentty(device, bufsize, mode=MODE):
     return open(fd, mode, bufsize)
 
 
-class opentty():
+class opentty:
     """Context manager returning a new rw stream connected to /dev/tty.
 
     The stream is None if the device cannot be opened.
@@ -136,10 +137,8 @@ class opentty():
 
     def __enter__(self):
         self.tty = None
-        try:
+        with contextlib.suppress(OSError):
             self.tty = _opentty(self.device, self.bufsize, self.mode)
-        except EnvironmentError:
-            pass
         return self.tty
 
     def __exit__(self, *ignored):
@@ -363,7 +362,7 @@ def iscolor():
 
 def is256color():
     """Return true if the terminal has >= 256 color support."""
-    return getnumcolors() >= 256
+    return getnumcolors() >= 256  # noqa: PLR2004
 
 
 # Help autosphinx's autoattribute find the constants...

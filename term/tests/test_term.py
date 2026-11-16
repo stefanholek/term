@@ -1,30 +1,25 @@
-import sys
 import os
-import unittest
+import sys
 import termios
+import unittest
+from io import BytesIO, StringIO
 
 # ruff: noqa: F403, F405
 from termios import *
+
 from term import *
-
-from term import MODE
-from term import _opentty
-from term import _readyx
-from term import _readcolor
-#from term import getyx
-from term import getbgcolor
-from term import getfgcolor
-from term import luminance
-from term import islightmode
-from term import isdarkmode
-from term import isxterm
-
-if sys.version_info[0] >= 3:
-    from io import BytesIO
-    from io import StringIO
-else:
-    from StringIO import StringIO as BytesIO
-    from StringIO import StringIO
+from term import (
+    MODE,
+    _opentty,
+    _readcolor,
+    _readyx,
+    getbgcolor,
+    getfgcolor,
+    isdarkmode,
+    islightmode,
+    isxterm,
+    luminance,
+)
 
 
 # CC members VMIN and VTIME should be ints, not bytes.
@@ -35,7 +30,7 @@ def int_(x):
     return x
 
 
-class setterm():
+class setterm:
     def __init__(self, val):
         self._val = val
         self._saved = None

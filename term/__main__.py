@@ -2,7 +2,6 @@
 
 import term
 
-
 if __name__ == '__main__':
     print('term.getyx', term.getyx())
     print('term.getyx_stdin_stdout', term.getyx_stdin_stdout())
