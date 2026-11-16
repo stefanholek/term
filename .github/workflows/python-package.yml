@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, workflow]
+    branches: [main, workflow, support-ruff]
   pull_request:
     branches: [main]
 
