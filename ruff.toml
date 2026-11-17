@@ -1,0 +1,5 @@
+[lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "PL"]
+
+[lint.isort]
+lines-between-types = 1

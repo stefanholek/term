@@ -4,6 +4,8 @@ Changelog
 3.1 - Unreleased
 ----------------
 
+- Replace pylint with ruff in tox.ini and GitHub workflow.
+  [stefan]
 
 3.0 - 2026-07-07
 ----------------
